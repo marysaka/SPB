@@ -488,7 +488,7 @@ namespace SPB.Platform.Win32
         public static extern bool SwapBuffers(IntPtr dc);
 
         [DllImport("kernel32.dll")]
-        public static extern IntPtr GetModuleHandle([MarshalAs(UnmanagedType.LPWStr)]string lpModuleName);
+        public static extern IntPtr GetModuleHandle([MarshalAs(UnmanagedType.LPWStr)] string lpModuleName);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr GetDC(IntPtr hWnd);

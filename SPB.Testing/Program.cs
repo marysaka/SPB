@@ -15,7 +15,7 @@ namespace SPB
         {
             NativeWindowBase window = PlatformHelper.CreateWindow(FramebufferFormat.Default, 0, 0, 250, 250);
 
-            OpenGLContextBase context = PlatformHelper.CreateOpenGLContext(FramebufferFormat.Default, 4, 6, OpenGLContextFlags.Debug | OpenGLContextFlags.Compat);
+            OpenGLContextBase context = PlatformHelper.CreateOpenGLContext(FramebufferFormat.Default, 3, 3, OpenGLContextFlags.Compat);
 
             context.Initialize(window);
             context.MakeCurrent(window);

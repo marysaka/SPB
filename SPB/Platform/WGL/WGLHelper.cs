@@ -1,6 +1,6 @@
-﻿using OpenTK.Core.Platform;
-using SPB.Graphics;
+﻿using SPB.Graphics;
 using SPB.Graphics.OpenGL;
+using SPB.Platform.Exceptions;
 using SPB.Platform.Win32;
 using System;
 using System.Collections.Generic;
@@ -250,7 +250,7 @@ namespace SPB.Platform.WGL
 
             int[] formatValue = new int[1];
 
-            if(!GetPixelFormatAttribivARB(dcHandle, 1, 0, 1, new int[1] { (int)WGL.ARB.Attribute.WGL_NUMBER_PIXEL_FORMATS_ARB }, formatValue))
+            if (!GetPixelFormatAttribivARB(dcHandle, 1, 0, 1, new int[1] { (int)WGL.ARB.Attribute.WGL_NUMBER_PIXEL_FORMATS_ARB }, formatValue))
             {
                 throw new PlatformException($"wglGetPixelFormatAttribivARB failed: {Marshal.GetLastWin32Error()}");
             }
