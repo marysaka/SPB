@@ -9,6 +9,8 @@ namespace SPB.Windowing
 
         public abstract uint SwapInterval { get; set; }
 
+        public abstract void Show();
+        public abstract void Hide();
         public abstract void SwapBuffers();
 
         public void Dispose()

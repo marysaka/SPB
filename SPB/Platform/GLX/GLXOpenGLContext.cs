@@ -40,7 +40,7 @@ namespace SPB.Platform.GLX
 
         public override IntPtr GetProcAddress(string procName)
         {
-            return GLX.GetProcAddress(procName);
+            return GLX.ARB.GetProcAddress(procName);
         }
 
         public override void Initialize(NativeWindowBase window = null)
@@ -70,11 +70,11 @@ namespace SPB.Platform.GLX
 
             IntPtr shareContextHandle = ShareContext == null ? IntPtr.Zero : ShareContext.ContextHandle;
 
-            IntPtr context = GLX.CreateContextAttribsARB(display, fbConfig, shareContextHandle, DirectRendering, contextAttribute.ToArray());
+            IntPtr context = GLX.ARB.CreateContextAttribs(display, fbConfig, shareContextHandle, DirectRendering, contextAttribute.ToArray());
 
             if (context == IntPtr.Zero)
             {
-                context = GLX.CreateContextAttribsARB(display, fbConfig, shareContextHandle, !DirectRendering, contextAttribute.ToArray());
+                context = GLX.ARB.CreateContextAttribs(display, fbConfig, shareContextHandle, !DirectRendering, contextAttribute.ToArray());
 
                 DirectRendering = !DirectRendering;
             }

@@ -1,12 +1,11 @@
-﻿using SPB.Graphics.OpenGL;
-using SPB.Platform.GLX;
+﻿using OpenTK.Graphics.OpenGL;
+using SPB.Graphics.OpenGL;
 using SPB.Compat;
-using System;
-using SPB.Platform.X11;
 using SPB.Graphics;
 using SPB.Windowing;
+using SPB.SPB.Platform;
+using System;
 using System.Threading;
-using OpenTK.Graphics.OpenGL;
 
 namespace SPB
 {
@@ -14,29 +13,31 @@ namespace SPB
     {
         static void Main(string[] args)
         {
-            GLXOpenGLContext context = new GLXOpenGLContext(FramebufferFormat.Default, 3, 3);
+            NativeWindowBase window = PlatformHelper.CreateWindow(FramebufferFormat.Default, 0, 0, 250, 250);
 
-            context.Initialize();
+            OpenGLContextBase context = PlatformHelper.CreateOpenGLContext(FramebufferFormat.Default, 4, 6, OpenGLContextFlags.Debug | OpenGLContextFlags.Compat);
 
-            NativeWindowBase window = X11Helper.CreateGLXWindow(new NativeHandle(X11.DefaultDisplay),
-                                                             FramebufferFormat.Default,
-                                                             0, 0, 100, 100);
-
+            context.Initialize(window);
             context.MakeCurrent(window);
 
             GL.LoadBindings(new OpenToolkitBindingsContext(context));
 
+            window.Show();
 
             GL.ClearColor(1.0f, 0.5f, 1.0f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             window.SwapBuffers();
+
+            Console.WriteLine($"OpenGL vendor: {GL.GetString(StringName.Vendor)}");
+            Console.WriteLine($"OpenGL version: {GL.GetString(StringName.Version)}");
+            Console.WriteLine($"OpenGL renderer: {GL.GetString(StringName.Renderer)}");
+            Console.WriteLine($"OpenGL context profile mask: {GL.GetInteger((GetPName)All.ContextProfileMask)}");
+            Console.WriteLine($"OpenGL context flags: {GL.GetInteger((GetPName)All.ContextFlags)}");
+
+            Thread.Sleep(2000);
+
             window.Dispose();
-
-            Thread.Sleep(10000);
-
-            string vendor = GL.GetString(StringName.Vendor);
-            Console.WriteLine($"OpenGL vendor: {vendor}");
 
             Console.WriteLine($"Dispose OpenGL context!");
             context.Dispose();

@@ -118,30 +118,30 @@ namespace SPB.Platform.GLX
         {
             List<int> result = new List<int>();
 
-            result.Add((int)GLX.ARBCreateContext.MAJOR_VERSION);
+            result.Add((int)GLX.ARB.CreateContext.MAJOR_VERSION);
             result.Add(context.Major);
 
-            result.Add((int)GLX.ARBCreateContext.MINOR_VERSION);
+            result.Add((int)GLX.ARB.CreateContext.MINOR_VERSION);
             result.Add(context.Minor);
 
             if (context.Flags != 0)
             {
                 if (context.Flags.HasFlag(OpenGLContextFlags.Debug))
                 {
-                    result.Add((int)GLX.ARBCreateContext.FLAGS);
-                    result.Add((int)GLX.ARBContextFlags.DEBUG_BIT);
+                    result.Add((int)GLX.ARB.CreateContext.FLAGS);
+                    result.Add((int)GLX.ARB.ContextFlags.DEBUG_BIT);
                 }
 
 
-                result.Add((int)GLX.ARBCreateContext.PROFILE_MASK);
+                result.Add((int)GLX.ARB.CreateContext.PROFILE_MASK);
 
                 if (context.Flags.HasFlag(OpenGLContextFlags.Compat))
                 {
-                    result.Add((int)GLX.ARBContextProfileFlags.COMPATIBILITY_PROFILE);
+                    result.Add((int)GLX.ARB.ContextProfileFlags.COMPATIBILITY_PROFILE);
                 }
                 else
                 {
-                    result.Add((int)GLX.ARBContextProfileFlags.CORE_PROFILE);
+                    result.Add((int)GLX.ARB.ContextProfileFlags.CORE_PROFILE);
                 }
             }
 

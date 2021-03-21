@@ -21,6 +21,9 @@ namespace SPB.Platform.GLX
 
         public override uint SwapInterval
         {
+            // TODO: check extension support
+            // TODO: support MESA and SGI
+            // TODO: use glXQueryDrawable to query swap interval when GLX_EXT_swap_control is supported.
             get
             {
                 return _swapInterval;
@@ -28,7 +31,7 @@ namespace SPB.Platform.GLX
             set
             {
                 // TODO: exception here
-                GLX.SwapInterval(DisplayHandle.RawHandle, WindowHandle.RawHandle, (int)_swapInterval);
+                GLX.Ext.SwapInterval(DisplayHandle.RawHandle, WindowHandle.RawHandle, (int)_swapInterval);
                 _swapInterval = value;
             }
         }
@@ -50,6 +53,16 @@ namespace SPB.Platform.GLX
 
                 IsDisposed = true;
             }
+        }
+
+        public override void Show()
+        {
+            X11.X11.MapWindow(DisplayHandle.RawHandle, WindowHandle.RawHandle);
+        }
+
+        public override void Hide()
+        {
+            X11.X11.UnmapWindow(DisplayHandle.RawHandle, WindowHandle.RawHandle);
         }
     }
 }

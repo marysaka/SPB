@@ -7,7 +7,7 @@ using Context = System.IntPtr;
 
 namespace SPB.Platform.GLX
 {
-    public sealed class GLX
+    internal sealed class GLX
     {
         private const string LibraryName = "glx.dll";
 
@@ -38,9 +38,6 @@ namespace SPB.Platform.GLX
         [DllImport(LibraryName, EntryPoint = "glXGetVisualFromFBConfig")]
         public unsafe extern static X11.X11.XVisualInfo* GetVisualFromFBConfig(Display display, IntPtr fbConfig);
 
-        [DllImport(LibraryName, EntryPoint = "glXCreateContextAttribsARB")]
-        public static extern IntPtr CreateContextAttribsARB(Display display, IntPtr fbConfigs, IntPtr shareContext, bool direct, int[] attributes);
-
         [DllImport(LibraryName, EntryPoint = "glXDestroyContext")]
         public static extern void DestroyContext(Display display, Context context);
 
@@ -49,9 +46,6 @@ namespace SPB.Platform.GLX
 
         [DllImport(LibraryName, EntryPoint = "glXSwapBuffers")]
         public static extern void SwapBuffers(Display display, Drawable drawable);
-
-        [DllImport(LibraryName, EntryPoint = "glXSwapIntervalEXT")]
-        public static extern ErrorCode SwapInterval(Display display, Drawable drawable, int interval);
 
         [DllImport(LibraryName, EntryPoint = "glXMakeCurrent")]
         public static extern bool MakeCurrent(Display display, Drawable drawable, Context context);
@@ -186,25 +180,6 @@ namespace SPB.Platform.GLX
             COLOR_INDEX_BIT = 0x00000002,
         }
 
-        public enum ARBContextFlags : int
-        {
-            DEBUG_BIT = 0x1,
-        }
-
-        public enum ARBContextProfileFlags : int
-        {
-            CORE_PROFILE = 0x1,
-            COMPATIBILITY_PROFILE = 0x2,
-        }
-
-        public enum ARBCreateContext : int
-        {
-            MAJOR_VERSION = 0x2091,
-            MINOR_VERSION = 0x2092,
-            FLAGS = 0x2094,
-            PROFILE_MASK = 0x9126,
-        }
-
         public enum ErrorCode : int
         {
             NO_ERROR = 0,
@@ -217,7 +192,43 @@ namespace SPB.Platform.GLX
             BAD_ENUM = 7,
         }
 
-        [DllImport(LibraryName, EntryPoint = "glXGetProcAddressARB")]
-        public static extern IntPtr GetProcAddress(string procName);
+
+
+        internal sealed class ARB
+        {
+            public enum ContextFlags : int
+            {
+                DEBUG_BIT = 0x1,
+                FORWARD_COMPATIBLE_BIT = 0x2,
+            }
+
+            public enum ContextProfileFlags : int
+            {
+                CORE_PROFILE = 0x1,
+                COMPATIBILITY_PROFILE = 0x2,
+            }
+
+            public enum CreateContext : int
+            {
+                MAJOR_VERSION = 0x2091,
+                MINOR_VERSION = 0x2092,
+                FLAGS = 0x2094,
+                PROFILE_MASK = 0x9126,
+            }
+
+            [DllImport(LibraryName, EntryPoint = "glXGetProcAddressARB", CharSet = CharSet.Unicode)]
+            public static extern IntPtr GetProcAddress(string procName);
+
+
+            [DllImport(LibraryName, EntryPoint = "glXCreateContextAttribsARB")]
+            public static extern Context CreateContextAttribs(Display display, IntPtr fbConfigs, Context shareContext, bool direct, int[] attributes);
+        }
+
+        internal sealed class Ext
+        {
+            [DllImport(LibraryName, EntryPoint = "glXSwapIntervalEXT")]
+            public static extern ErrorCode SwapInterval(Display display, Drawable drawable, int interval);
+        }
+
     }
 }

@@ -8,10 +8,10 @@ Graphic context support:
 Platform support:
 
 - X11 via GLX (v1.3 and upper, backward compatibility to do)
+- WGL (with WGL_ARB_create_context, WGL_ARB_create_context_profile, WGL_ARB_pixel_format and WGL_EXT_swap_control)
 
 TODO:
 - EGL
-- WGL
 - Cocoa (& Carbone?)
 - Vulkan context
 - Metal

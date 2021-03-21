@@ -54,9 +54,6 @@ namespace SPB.Platform.X11
                     throw new ApplicationException("Cannot create X window!");
                 }
 
-                X11.MapWindow(display.RawHandle, rawWindowHandle);
-
-
                 return new GLXWindow(display, new NativeHandle(rawWindowHandle));
             }
         }
