@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace SPB.SPB.Platform.Win32
+namespace SPB.Platform.Win32
 {
     internal sealed class Win32
     {

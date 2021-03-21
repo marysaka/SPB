@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using HDC = System.IntPtr;
 using HGLRC = System.IntPtr;
 
-namespace SPB.SPB.Platform.WGL
+namespace SPB.Platform.WGL
 {
     internal sealed class WGL
     {

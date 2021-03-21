@@ -3,10 +3,8 @@ using SPB.Graphics.Exceptions;
 using SPB.Graphics.OpenGL;
 using SPB.Windowing;
 using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 
-namespace SPB.SPB.Platform.WGL
+namespace SPB.Platform.WGL
 {
     public class WGLOpenGLContext : OpenGLContextBase
     {

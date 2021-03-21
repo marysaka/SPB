@@ -1,9 +1,9 @@
 ﻿using SPB.Windowing;
 using System;
 
-using static SPB.SPB.Platform.Win32.Win32;
+using static SPB.Platform.Win32.Win32;
 
-namespace SPB.SPB.Platform.WGL
+namespace SPB.Platform.WGL
 {
     public class WGLWindow : NativeWindowBase
     {

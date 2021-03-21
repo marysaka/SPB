@@ -3,13 +3,13 @@ using SPB.Graphics.Exceptions;
 using SPB.Graphics.OpenGL;
 using SPB.Platform.GLX;
 using SPB.Platform.X11;
-using SPB.SPB.Platform.WGL;
-using SPB.SPB.Platform.Win32;
+using SPB.Platform.WGL;
+using SPB.Platform.Win32;
 using SPB.Windowing;
 using System;
 using System.Runtime.InteropServices;
 
-namespace SPB.SPB.Platform
+namespace SPB.Platform
 {
     public sealed class PlatformHelper
     {
@@ -18,7 +18,7 @@ namespace SPB.SPB.Platform
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 // TODO: detect X11/Wayland/DRI
-                return X11Helper.CreateGLXWindow(new NativeHandle(X11.DefaultDisplay), format, x, y, width, height);
+                return X11Helper.CreateGLXWindow(new NativeHandle(X11.X11.DefaultDisplay), format, x, y, width, height);
             }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

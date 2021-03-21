@@ -1,15 +1,16 @@
 ﻿using OpenTK.Core.Platform;
 using SPB.Graphics;
 using SPB.Graphics.OpenGL;
-using SPB.SPB.Platform.Win32;
+using SPB.Platform.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using static SPB.SPB.Platform.Win32.Win32;
 
-namespace SPB.SPB.Platform.WGL
+using static SPB.Platform.Win32.Win32;
+
+namespace SPB.Platform.WGL
 {
     public static class WGLHelper
     {

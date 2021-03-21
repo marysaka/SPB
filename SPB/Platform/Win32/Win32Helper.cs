@@ -1,12 +1,11 @@
 ﻿using OpenTK.Core.Platform;
-using SPB.Graphics;
-using SPB.SPB.Platform.WGL;
+using SPB.Platform.WGL;
 using SPB.Windowing;
 using System;
 using System.Runtime.InteropServices;
-using static SPB.SPB.Platform.Win32.Win32;
+using static SPB.Platform.Win32.Win32;
 
-namespace SPB.SPB.Platform.Win32
+namespace SPB.Platform.Win32
 {
     public class Win32Helper
     {

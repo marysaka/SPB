@@ -3,7 +3,7 @@ using SPB.Graphics.OpenGL;
 using SPB.Compat;
 using SPB.Graphics;
 using SPB.Windowing;
-using SPB.SPB.Platform;
+using SPB.Platform;
 using System;
 using System.Threading;
 
