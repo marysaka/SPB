@@ -45,9 +45,9 @@ namespace SPB.Platform
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                if (shareContext != null && !(shareContext is GLXOpenGLContext))
+                if (shareContext != null && !(shareContext is WGLOpenGLContext))
                 {
-                    throw new ContextException($"shared context must be of type {typeof(GLXOpenGLContext).Name}.");
+                    throw new ContextException($"shared context must be of type {typeof(WGLOpenGLContext).Name}.");
                 }
 
                 return new WGLOpenGLContext(framebufferFormat, major, minor, flags, directRendering, (WGLOpenGLContext)shareContext);

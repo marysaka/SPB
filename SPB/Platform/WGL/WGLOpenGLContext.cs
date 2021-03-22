@@ -3,6 +3,7 @@ using SPB.Graphics.Exceptions;
 using SPB.Graphics.OpenGL;
 using SPB.Windowing;
 using System;
+using System.Runtime.InteropServices;
 
 namespace SPB.Platform.WGL
 {
@@ -48,12 +49,16 @@ namespace SPB.Platform.WGL
 
             if (ContextHandle != IntPtr.Zero)
             {
-                _deviceContext = Win32.Win32.GetDC(windowHandle);
-
                 // If there is no window provided, keep the temporary window around to free it later.
                 if (window == null)
                 {
                     _windowHandle = windowHandle;
+                    _deviceContext = Win32.Win32.GetDC(windowHandle);
+                }
+                else
+                {
+                    _window = window;
+                    _deviceContext = _window.DisplayHandle.RawHandle;
                 }
             }
 
@@ -87,7 +92,14 @@ namespace SPB.Platform.WGL
             }
             else
             {
-                success = WGL.MakeCurrent(IntPtr.Zero, IntPtr.Zero);
+                if (WGL.GetCurrentContext() == IntPtr.Zero)
+                {
+                    success = true;
+                }
+                else
+                {
+                    success = WGL.MakeCurrent(IntPtr.Zero, IntPtr.Zero);
+                }
             }
 
             if (success)
@@ -96,7 +108,7 @@ namespace SPB.Platform.WGL
             }
             else
             {
-                throw new ContextException("MakeCurrent() failed.");
+                throw new ContextException($"MakeCurrent() failed with error 0x{Marshal.GetLastWin32Error():x}");
             }
         }
 

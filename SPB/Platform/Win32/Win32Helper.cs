@@ -15,7 +15,7 @@ namespace SPB.Platform.Win32
 
         internal const string ClassName = "SPB.Win32";
 
-        internal static void EnsureInit()
+        private static void EnsureInit()
         {
             if (!_isInit)
             {
