@@ -15,11 +15,13 @@ namespace SPB.Platform.Win32
 
         internal const string ClassName = "SPB.Win32";
 
+        private static WNDCLASSEX cl;
+
         private static void EnsureInit()
         {
             if (!_isInit)
             {
-                WNDCLASSEX cl = WNDCLASSEX.Create();
+                cl = WNDCLASSEX.Create();
 
                 cl.lpszClassName = ClassName;
                 cl.hInstance = GetModuleHandle(null);
