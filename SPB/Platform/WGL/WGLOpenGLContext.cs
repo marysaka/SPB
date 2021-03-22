@@ -122,6 +122,7 @@ namespace SPB.Platform.WGL
 
                     if (_windowHandle != IntPtr.Zero)
                     {
+                        Win32.Win32.ReleaseDC(_windowHandle, _deviceContext);
                         Win32.Win32.DestroyWindow(_windowHandle);
                     }
 

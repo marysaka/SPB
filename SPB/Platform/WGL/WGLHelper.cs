@@ -151,6 +151,8 @@ namespace SPB.Platform.WGL
                 // We got everything we needed, clean up!
                 WGL.MakeCurrent(oldDC, oldContext);
                 WGL.DeleteContext(dummyContext);
+
+                ReleaseDC(dummyWindow, dummyWindowDC);
                 DestroyWindow(dummyWindow);
 
                 _opengl32Handle = NativeLibrary.Load("opengl32.dll");
@@ -426,6 +428,8 @@ namespace SPB.Platform.WGL
             List<int> contextAttributes = GetContextCreationARBAttribute(major, minor, flags);
 
             IntPtr context = CreateContextAttribsArb(dcHandle, shareContext, contextAttributes.ToArray());
+
+            ReleaseDC(windowHandle, dcHandle);
 
             if (hasTempWindow)
             {

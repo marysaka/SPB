@@ -51,6 +51,7 @@ namespace SPB.Platform.WGL
             {
                 if (disposing)
                 {
+                    ReleaseDC(WindowHandle.RawHandle, DisplayHandle.RawHandle);
                     DestroyWindow(WindowHandle.RawHandle);
                 }
 

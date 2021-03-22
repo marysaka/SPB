@@ -493,6 +493,9 @@ namespace SPB.Platform.Win32
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr GetDC(IntPtr hWnd);
 
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern void ReleaseDC(IntPtr hWnd, IntPtr dc);
+
         [DllImport("gdi32.dll")]
         public static extern int ChoosePixelFormat(IntPtr hdc, ref PixelFormatDescriptor pfd);
 
