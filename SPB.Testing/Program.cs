@@ -15,14 +15,14 @@ namespace SPB
         {
             NativeWindowBase window = PlatformHelper.CreateWindow(FramebufferFormat.Default, 0, 0, 250, 250);
 
+            window.Show();
+
             OpenGLContextBase context = PlatformHelper.CreateOpenGLContext(FramebufferFormat.Default, 3, 3, OpenGLContextFlags.Compat);
 
             context.Initialize(window);
             context.MakeCurrent(window);
 
             GL.LoadBindings(new OpenToolkitBindingsContext(context));
-
-            window.Show();
 
             GL.ClearColor(1.0f, 0.5f, 1.0f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);

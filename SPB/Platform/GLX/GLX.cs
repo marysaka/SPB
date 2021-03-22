@@ -216,7 +216,7 @@ namespace SPB.Platform.GLX
                 PROFILE_MASK = 0x9126,
             }
 
-            [DllImport(LibraryName, EntryPoint = "glXGetProcAddressARB", CharSet = CharSet.Unicode)]
+            [DllImport(LibraryName, EntryPoint = "glXGetProcAddressARB")]
             public static extern IntPtr GetProcAddress(string procName);
 
 
