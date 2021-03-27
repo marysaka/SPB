@@ -246,6 +246,25 @@ namespace SPB.Platform.WGL
             }
         }
 
+        private static int FindPerfectFormat(IntPtr dcHandle, FramebufferFormat format)
+        {
+            List<int> attributes = FramebufferFormatToPixelFormatAttributes(format);
+
+            int[] formats = new int[1];
+
+            if (!ChoosePixelFormatArb(dcHandle, attributes.ToArray(), null, formats.Length, formats, out int numFormat))
+            {
+                throw new PlatformException($"wglChoosePixelFormatARB failed: {Marshal.GetLastWin32Error()}");
+            }
+
+            if (numFormat == 0)
+            {
+                return -1;
+            }
+
+            return formats[0];
+        }
+
         private static int FindClosestFormat(IntPtr dcHandle, FramebufferFormat format)
         {
             const int WGL_NO_ACCELERATION_ARB = 0x2025;
@@ -347,6 +366,91 @@ namespace SPB.Platform.WGL
             return closestIndex;
         }
 
+        private static List<int> FramebufferFormatToPixelFormatAttributes(FramebufferFormat format)
+        {
+            const int WGL_FULL_ACCELERATION_ARB = 0x2027;
+            List<int> result = new List<int>();
+
+            // Full acceleration required
+            result.Add((int)WGL.ARB.Attribute.WGL_ACCELERATION_ARB);
+            result.Add(WGL_FULL_ACCELERATION_ARB);
+
+            // We use OpenGL so we need it...
+            result.Add((int)WGL.ARB.Attribute.WGL_SUPPORT_OPENGL_ARB);
+            result.Add(1);
+
+            result.Add((int)WGL.ARB.Attribute.WGL_DRAW_TO_WINDOW_ARB);
+            result.Add(1);
+
+            if (format.Color.BitsPerPixel > 0)
+            {
+                result.Add((int)WGL.ARB.Attribute.WGL_RED_BITS_ARB);
+                result.Add(format.Color.Red);
+
+                result.Add((int)WGL.ARB.Attribute.WGL_GREEN_BITS_ARB);
+                result.Add(format.Color.Green);
+
+                result.Add((int)WGL.ARB.Attribute.WGL_BLUE_BITS_ARB);
+                result.Add(format.Color.Blue);
+
+                result.Add((int)WGL.ARB.Attribute.WGL_ALPHA_BITS_ARB);
+                result.Add(format.Color.Alpha);
+            }
+
+            if (format.DepthBits > 0)
+            {
+                result.Add((int)WGL.ARB.Attribute.WGL_DEPTH_BITS_ARB);
+                result.Add(format.DepthBits);
+            }
+
+
+            if (format.Buffers > 1)
+            {
+                result.Add((int)WGL.ARB.Attribute.WGL_DOUBLE_BUFFER_ARB);
+                result.Add(1);
+            }
+
+            if (format.StencilBits > 0)
+            {
+                result.Add((int)WGL.ARB.Attribute.WGL_STENCIL_BITS_ARB);
+                result.Add(format.StencilBits);
+            }
+
+            if (format.Accumulator.BitsPerPixel > 0)
+            {
+                result.Add((int)WGL.ARB.Attribute.WGL_ACCUM_ALPHA_BITS_ARB);
+                result.Add(format.Accumulator.Alpha);
+
+                result.Add((int)WGL.ARB.Attribute.WGL_ACCUM_BLUE_BITS_ARB);
+                result.Add(format.Accumulator.Blue);
+
+                result.Add((int)WGL.ARB.Attribute.WGL_ACCUM_GREEN_BITS_ARB);
+                result.Add(format.Accumulator.Green);
+
+                result.Add((int)WGL.ARB.Attribute.WGL_ACCUM_RED_BITS_ARB);
+                result.Add(format.Accumulator.Red);
+            }
+
+            if (format.Samples > 0)
+            {
+                result.Add((int)WGL.ARB.Attribute.WGL_DOUBLE_BUFFER_ARB);
+                result.Add(1);
+            }
+
+            if (format.Stereo)
+            {
+                result.Add((int)WGL.ARB.Attribute.WGL_STEREO_ARB);
+                result.Add(format.Stereo ? 1 : 0);
+            }
+
+            // NOTE: Format is key: value, nothing in the spec specify if the end marker follow or not this format.
+            // BODY: As such, we add an extra 0 just to be sure we don't break anything.
+            result.Add(0);
+            result.Add(0);
+
+            return result;
+        }
+
         private static List<int> GetContextCreationARBAttribute(int major, int minor, OpenGLContextFlags flags)
         {
             List<int> result = new List<int>();
@@ -402,7 +506,13 @@ namespace SPB.Platform.WGL
 
             IntPtr dcHandle = GetDC(windowHandle);
 
-            int pixelFormat = FindClosestFormat(dcHandle, framebufferFormat);
+            int pixelFormat = FindPerfectFormat(dcHandle, framebufferFormat);
+
+            // Perfect match not availaible, search for the closest
+            if (pixelFormat == -1)
+            {
+                pixelFormat = FindClosestFormat(dcHandle, framebufferFormat);
+            }
 
             if (pixelFormat == -1)
             {

@@ -44,10 +44,10 @@ namespace SPB.Platform.GLX
                 result.Add(1);
             }
 
-            if (format.Stereo)
+            if (format.StencilBits > 0)
             {
                 result.Add((int)GLX.Attribute.STENCIL_SIZE);
-                result.Add(format.Stereo ? 1 : 0);
+                result.Add(format.StencilBits);
             }
 
             if (format.Accumulator.BitsPerPixel > 0)
@@ -77,7 +77,7 @@ namespace SPB.Platform.GLX
             if (format.Stereo)
             {
                 result.Add((int)GLX.Attribute.STEREO);
-                result.Add(1);
+                result.Add(format.Stereo ? 1 : 0);
             }
 
             // NOTE: Format is key: value, nothing in the spec specify if the end marker follow or not this format.
