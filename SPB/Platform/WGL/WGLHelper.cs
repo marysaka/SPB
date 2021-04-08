@@ -20,9 +20,11 @@ namespace SPB.Platform.WGL
 
         private static string[] Extensions;
 
-        private delegate string wglGetExtensionsString();
+        private delegate IntPtr wglGetExtensionsStringARB(IntPtr hdc);
+        private delegate IntPtr wglGetExtensionsStringEXT();
 
-        private static wglGetExtensionsString GetExtensionsString;
+        private static wglGetExtensionsStringEXT GetExtensionsStringEXT;
+        private static wglGetExtensionsStringARB GetExtensionsStringARB;
 
         [UnmanagedFunctionPointer(CallingConvention.Winapi, SetLastError = true)]
         private delegate bool wglChoosePixelFormatARBDelegate(IntPtr hdc, int[] piAttribIList, float[] pfAttribFList, int nMaxFormats, int[] piFormats, out int nNumFormats);
@@ -46,6 +48,23 @@ namespace SPB.Platform.WGL
         public delegate int wglGetSwapIntervalEXTDelegate();
 
         public static wglGetSwapIntervalEXTDelegate GetSwapInterval { get; private set; }
+
+
+        private static string GetExtensionsString()
+        {
+            IntPtr stringPtr;
+
+            if (GetExtensionsStringARB != null)
+            {
+                stringPtr = GetExtensionsStringARB(WGL.GetCurrentDC());
+            }
+            else
+            {
+                stringPtr = GetExtensionsStringEXT();
+            }
+
+            return Marshal.PtrToStringAnsi(stringPtr);
+        }
 
         public static IntPtr GetProcAddress(string procName)
         {
@@ -122,16 +141,8 @@ namespace SPB.Platform.WGL
                     throw new PlatformException($"WGL.MakeCurrent failed for dummy context: {Marshal.GetLastWin32Error()}");
                 }
 
-                // Now that we have a context, query everything we need.
-
-                IntPtr getExtensionsPtr = WGL.GetProcAddress("wglGetExtensionsStringEXT");
-
-                if (getExtensionsPtr == IntPtr.Zero)
-                {
-                    getExtensionsPtr = WGL.GetProcAddress("wglGetExtensionsStringARB");
-                }
-
-                GetExtensionsString = Marshal.GetDelegateForFunctionPointer<wglGetExtensionsString>(getExtensionsPtr);
+                GetExtensionsStringARB = Marshal.GetDelegateForFunctionPointer<wglGetExtensionsStringARB>(WGL.GetProcAddress("wglGetExtensionsStringARB"));
+                GetExtensionsStringEXT = Marshal.GetDelegateForFunctionPointer<wglGetExtensionsStringEXT>(WGL.GetProcAddress("wglGetExtensionsStringEXT"));
 
                 Extensions = GetExtensionsString().Split(" ");
 
