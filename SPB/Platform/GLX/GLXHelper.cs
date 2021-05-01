@@ -107,7 +107,7 @@ namespace SPB.Platform.GLX
                 {
                     result = *fbConfigs;
 
-                    XFree((IntPtr)fbConfigs);
+                    Free((IntPtr)fbConfigs);
                 }
             }
 

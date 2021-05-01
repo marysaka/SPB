@@ -420,6 +420,16 @@ namespace SPB.Platform.Win32
             HSHELL_WINDOWREPLACED = 13
         }
 
+        public enum GetWindowLongIndex : int
+        {
+            GWL_WNDPROC = -4,
+            GWL_HWNDPARENT = -8,
+            GWL_HINSTANCE = -6,
+            GWL_ID = -12,
+            GWL_EXSTYLE = -20,
+            GWL_USERDATA = -21
+        }
+
 
         [UnmanagedFunctionPointer(CallingConvention.Winapi)]
         internal delegate IntPtr WindowProc(IntPtr hWnd, WindowsMessages msg, IntPtr wParam, IntPtr lParam);
@@ -495,6 +505,9 @@ namespace SPB.Platform.Win32
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern void ReleaseDC(IntPtr hWnd, IntPtr dc);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetWindowLong(IntPtr hWnd, GetWindowLongIndex nIndex);
 
         [DllImport("gdi32.dll")]
         public static extern int ChoosePixelFormat(IntPtr hdc, ref PixelFormatDescriptor pfd);

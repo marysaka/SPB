@@ -13,7 +13,7 @@ namespace SPB.Platform
 {
     public sealed class PlatformHelper
     {
-        public static NativeWindowBase CreateWindow(FramebufferFormat format, int x, int y, int width, int height)
+        public static SwapableNativeWindowBase CreateOpenGLWindow(FramebufferFormat format, int x, int y, int width, int height)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {

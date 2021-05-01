@@ -13,8 +13,6 @@ namespace SPB.Platform.Win32
 
         public bool IsDisposed { get; private set; }
 
-        public override uint SwapInterval { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
         public SimpleWin32Window(NativeHandle windowHandle)
         {
             WindowHandle = windowHandle;
@@ -31,11 +29,6 @@ namespace SPB.Platform.Win32
 
                 IsDisposed = true;
             }
-        }
-
-        public override void SwapBuffers()
-        {
-            throw new NotImplementedException();
         }
 
         public override void Show()

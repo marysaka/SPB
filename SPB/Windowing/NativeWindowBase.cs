@@ -7,11 +7,8 @@ namespace SPB.Windowing
         public abstract NativeHandle DisplayHandle { get; }
         public abstract NativeHandle WindowHandle { get; }
 
-        public abstract uint SwapInterval { get; set; }
-
         public abstract void Show();
         public abstract void Hide();
-        public abstract void SwapBuffers();
 
         public void Dispose()
         {

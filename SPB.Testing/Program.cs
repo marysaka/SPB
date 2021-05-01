@@ -13,7 +13,7 @@ namespace SPB
     {
         static void Main(string[] args)
         {
-            NativeWindowBase window = PlatformHelper.CreateWindow(FramebufferFormat.Default, 0, 0, 250, 250);
+            SwapableNativeWindowBase window = PlatformHelper.CreateOpenGLWindow(FramebufferFormat.Default, 0, 0, 250, 250);
 
             window.Show();
 

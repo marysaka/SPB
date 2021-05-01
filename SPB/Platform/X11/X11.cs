@@ -50,7 +50,7 @@ namespace SPB.Platform.X11
         public extern static Window RootWindow(Display display, int screenNumber);
 
         [DllImport(LibraryName, EntryPoint = "XFree")]
-        public extern static int XFree(IntPtr data);
+        public extern static int Free(IntPtr data);
 
         [DllImport(LibraryName, EntryPoint = "XCreateWindow")]
         public extern static IntPtr CreateWindow(Display display, Window parent, int x, int y, int width, int height, int borderWidth, int depth, int xclass, IntPtr visual, IntPtr valueMask, IntPtr attributes);
@@ -66,6 +66,9 @@ namespace SPB.Platform.X11
 
         [DllImport(LibraryName, EntryPoint = "XCreateColormap")]
         public static extern IntPtr CreateColormap(Display display, Window window, IntPtr visual, int alloc);
+
+        [DllImport(LibraryName, EntryPoint = "XGetXCBConnection")]
+        public extern static IntPtr GetXCBConnection(Display display);
 
         public enum XEventName
         {
@@ -111,7 +114,7 @@ namespace SPB.Platform.X11
         public struct XErrorEvent
         {
             public XEventName type;
-            public IntPtr display;
+            public Display display;
             public IntPtr resourceid;
             public IntPtr serial;
             public byte error_code;
@@ -119,7 +122,7 @@ namespace SPB.Platform.X11
             public byte minor_code;
         }
 
-        public delegate int XErrorHandler(IntPtr displayHandle, ref XErrorEvent errorEvent);
+        public delegate int XErrorHandler(Display displayHandle, ref XErrorEvent errorEvent);
 
         public enum XRequest : byte
         {
@@ -325,7 +328,7 @@ namespace SPB.Platform.X11
             public IntPtr Cursor;
         }
 
-        static int ErrorHandler(IntPtr displayHandle, ref XErrorEvent errorEvent)
+        static int ErrorHandler(Display displayHandle, ref XErrorEvent errorEvent)
         {
             Console.WriteLine($"XError: {errorEvent.type} result is {errorEvent.error_code}");
             Console.Out.Flush();
