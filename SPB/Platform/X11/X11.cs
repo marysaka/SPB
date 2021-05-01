@@ -67,7 +67,7 @@ namespace SPB.Platform.X11
         [DllImport(LibraryName, EntryPoint = "XCreateColormap")]
         public static extern IntPtr CreateColormap(Display display, Window window, IntPtr visual, int alloc);
 
-        [DllImport(LibraryName, EntryPoint = "XGetXCBConnection")]
+        [DllImport("libX11-xcb", EntryPoint = "XGetXCBConnection")]
         public extern static IntPtr GetXCBConnection(Display display);
 
         public enum XEventName

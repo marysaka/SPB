@@ -204,6 +204,8 @@ namespace SPB.Graphics.Vulkan
 
         public static string[] GetRequiredInstanceExtensions()
         {
+            EnsureInit();
+
             List<string> extensions = new() { "VK_KHR_surface" };
 
             if (OperatingSystem.IsWindows())
