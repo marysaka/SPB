@@ -5,7 +5,7 @@ using static SPB.Platform.Win32.Win32;
 
 namespace SPB.Platform.WGL
 {
-    public class WGLWindow : SwapableNativeWindowBase
+    public class WGLWindow : SwappableNativeWindowBase
     {
         public override NativeHandle DisplayHandle { get; }
         public override NativeHandle WindowHandle { get; }

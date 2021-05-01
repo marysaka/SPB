@@ -2,7 +2,7 @@ using SPB.Windowing;
 
 namespace SPB.Platform.GLX
 {
-    public sealed class GLXWindow : SwapableNativeWindowBase
+    public sealed class GLXWindow : SwappableNativeWindowBase
     {
         public override NativeHandle DisplayHandle { get; }
         public override NativeHandle WindowHandle { get; }

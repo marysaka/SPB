@@ -1,6 +1,6 @@
 ﻿namespace SPB.Windowing
 {
-    public abstract class SwapableNativeWindowBase : NativeWindowBase
+    public abstract class SwappableNativeWindowBase : NativeWindowBase
     {
         public abstract uint SwapInterval { get; set; }
 
