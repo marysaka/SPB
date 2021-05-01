@@ -15,6 +15,7 @@ namespace SPB.Platform.X11
         public static int DefaultScreen { get; private set; }
         public static IntPtr DefaultDisplay { get; private set; }
 
+        private static XErrorHandler _errorHandlerDelegate = ErrorHandler;
 
         [DllImport(LibraryName, EntryPoint = "XInitThreads")]
         private extern static int InitThreads();
@@ -335,7 +336,7 @@ namespace SPB.Platform.X11
         {
             InitThreads();
 
-            SetErrorHandler(ErrorHandler);
+            SetErrorHandler(_errorHandlerDelegate);
 
             DefaultDisplay = OpenDisplay(IntPtr.Zero);
             DefaultScreen = 0;
