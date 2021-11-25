@@ -74,15 +74,15 @@ namespace SPB.Graphics.Vulkan
 
         private static string GetLibraryName()
         {
-            if (OperatingSystem.IsWindows())
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 return VulkanLibraryNameWindows;
             }
-            else if (OperatingSystem.IsLinux())
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 return VulkanLibraryNameLinux;
             }
-            else if (OperatingSystem.IsMacOS())
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 return VulkanLibraryNameMacOS;
             }
@@ -166,12 +166,12 @@ namespace SPB.Graphics.Vulkan
 
                 bool isVulkanUsable = IsExtensionPresent("VK_KHR_surface");
 
-                if (OperatingSystem.IsWindows())
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     isVulkanUsable &= IsExtensionPresent("VK_KHR_win32_surface");
                 }
                 // FIXME: We assume Linux == X11 for now.
-                else if (OperatingSystem.IsLinux())
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
                     if (!IsExtensionPresent("VK_KHR_xcb_surface"))
                     {
@@ -181,7 +181,7 @@ namespace SPB.Graphics.Vulkan
                         }
                     }
                 }
-                else if (OperatingSystem.IsMacOS())
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
                     isVulkanUsable &= IsExtensionPresent("VK_MVK_macos_surface");
                 }
@@ -206,14 +206,15 @@ namespace SPB.Graphics.Vulkan
         {
             EnsureInit();
 
-            List<string> extensions = new() { "VK_KHR_surface" };
+            List<string> extensions = new List<string>();
+            extensions.Add("VK_KHR_surface");
 
-            if (OperatingSystem.IsWindows())
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 extensions.Add("VK_KHR_win32_surface");
             }
 
-            if (OperatingSystem.IsLinux())
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 // Prefer XCB as xlib implementation was known to have ICD issues.
                 if (IsExtensionPresent("VK_KHR_xcb_surface"))
@@ -226,7 +227,7 @@ namespace SPB.Graphics.Vulkan
                 }
             }
 
-            if (OperatingSystem.IsMacOS())
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 extensions.Add("VK_MVK_macos_surface");
             }
@@ -238,7 +239,7 @@ namespace SPB.Graphics.Vulkan
         {
             EnsureInit();
 
-            if (OperatingSystem.IsWindows() && IsExtensionPresent("VK_KHR_win32_surface"))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && IsExtensionPresent("VK_KHR_win32_surface"))
             {
                 vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = Marshal.GetDelegateForFunctionPointer<vkCreateWin32SurfaceKHRDelegate>(_vkGetInstanceProcAddr(vulkanInstance, "vkCreateWin32SurfaceKHR"));
 
@@ -261,7 +262,7 @@ namespace SPB.Graphics.Vulkan
                 return surface;
             }
 
-            if (OperatingSystem.IsLinux())
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 if (IsExtensionPresent("VK_KHR_xcb_surface"))
                 {

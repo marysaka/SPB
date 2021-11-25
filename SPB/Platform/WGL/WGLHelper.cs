@@ -5,7 +5,6 @@ using SPB.Platform.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 using static SPB.Platform.Win32.Win32;
@@ -144,7 +143,7 @@ namespace SPB.Platform.WGL
                 GetExtensionsStringARB = Marshal.GetDelegateForFunctionPointer<wglGetExtensionsStringARB>(WGL.GetProcAddress("wglGetExtensionsStringARB"));
                 GetExtensionsStringEXT = Marshal.GetDelegateForFunctionPointer<wglGetExtensionsStringEXT>(WGL.GetProcAddress("wglGetExtensionsStringEXT"));
 
-                Extensions = GetExtensionsString().Split(" ");
+                Extensions = GetExtensionsString().Split(' ');
 
                 // Ensure that all extensions that we are requiring are present.
                 EnsureExtensionPresence("WGL_ARB_create_context");
@@ -175,6 +174,8 @@ namespace SPB.Platform.WGL
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct AttributeInformation
         {
+            public const int Size = 17 * sizeof(int);
+
             public int SupportOpenGL;
             public int DrawToWindow;
             public int PixelType;
@@ -255,6 +256,30 @@ namespace SPB.Platform.WGL
                     extraDifference += (uint)(((int)desiredFormat.Samples - Samples) * ((int)desiredFormat.Samples - Samples));
                 }
             }
+
+            public static AttributeInformation Create(int[] values)
+            {
+                return new AttributeInformation
+                {
+                    SupportOpenGL = values[0],
+                    DrawToWindow = values[1],
+                    PixelType = values[2],
+                    Acceleration = values[3],
+                    RedBits = values[4],
+                    GreenBits = values[5],
+                    BlueBits = values[6],
+                    AlphaBits = values[7],
+                    DepthBits = values[8],
+                    StencilBits = values[9],
+                    AccumRedBits = values[10],
+                    AccumGreenBits = values[11],
+                    AccumBlueBits = values[12],
+                    AccumAlphaBits = values[13],
+                    Stereo = values[14],
+                    DoubleBuffer = values[15],
+                    Samples = values[16]
+                };
+        }
         }
 
         private static int FindPerfectFormat(IntPtr dcHandle, FramebufferFormat format)
@@ -315,7 +340,7 @@ namespace SPB.Platform.WGL
 
             int[] attributes = tempAttributeList.ToArray();
 
-            int[] values = new int[Unsafe.SizeOf<AttributeInformation>() / sizeof(int)];
+            int[] values = new int[AttributeInformation.Size / sizeof(int)];
 
             int closestIndex = int.MaxValue;
             uint leastMissing = uint.MaxValue;
@@ -329,7 +354,7 @@ namespace SPB.Platform.WGL
                     throw new PlatformException($"wglGetPixelFormatAttribivARB failed: {Marshal.GetLastWin32Error()}");
                 }
 
-                AttributeInformation information = MemoryMarshal.Cast<int, AttributeInformation>(values)[0];
+                AttributeInformation information = AttributeInformation.Create(values);
 
                 if (information.SupportOpenGL != 0 && information.Acceleration != WGL_NO_ACCELERATION_ARB)
                 {
