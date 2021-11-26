@@ -1,4 +1,4 @@
-﻿namespace SPB.Windowing
+namespace SPB.Windowing
 {
     public abstract class SwappableNativeWindowBase : NativeWindowBase
     {

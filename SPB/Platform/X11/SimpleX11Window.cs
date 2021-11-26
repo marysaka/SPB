@@ -1,4 +1,4 @@
-﻿using SPB.Windowing;
+using SPB.Windowing;
 using System.Runtime.Versioning;
 
 namespace SPB.Platform.X11

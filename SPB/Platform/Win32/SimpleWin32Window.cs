@@ -1,4 +1,4 @@
-﻿using SPB.Windowing;
+using SPB.Windowing;
 using System;
 using System.Runtime.Versioning;
 using static SPB.Platform.Win32.Win32;

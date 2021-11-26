@@ -1,4 +1,4 @@
-﻿using SPB.Platform.Exceptions;
+using SPB.Platform.Exceptions;
 using SPB.Platform.WGL;
 using SPB.Windowing;
 using System;

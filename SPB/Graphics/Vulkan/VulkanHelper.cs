@@ -1,4 +1,4 @@
-﻿using SPB.Platform.Exceptions;
+using SPB.Platform.Exceptions;
 using SPB.Platform.Win32;
 using SPB.Platform.X11;
 using SPB.Windowing;

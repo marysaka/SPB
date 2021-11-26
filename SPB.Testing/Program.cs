@@ -1,4 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL;
 using SPB.Graphics.OpenGL;
 using SPB.Compat;
 using SPB.Graphics;

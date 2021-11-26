@@ -1,4 +1,4 @@
-﻿using SPB.Graphics;
+using SPB.Graphics;
 using SPB.Graphics.Exceptions;
 using SPB.Graphics.OpenGL;
 using SPB.Windowing;
