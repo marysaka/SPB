@@ -1,7 +1,9 @@
 ﻿using SPB.Windowing;
+using System.Runtime.Versioning;
 
 namespace SPB.Platform.X11
 {
+    [SupportedOSPlatform("linux")]
     public sealed class SimpleX11Window : NativeWindowBase
     {
         public override NativeHandle DisplayHandle { get; }

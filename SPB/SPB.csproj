@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <VersionPrefix>0.0.3</VersionPrefix>
+    <TargetFramework>net6.0</TargetFramework>
+    <VersionPrefix>0.0.4</VersionPrefix>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Authors>Thog</Authors>
     <Description>Simple Platform Bindings</Description>

@@ -247,7 +247,10 @@ namespace SPB.Graphics.Vulkan
                     StructType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
                     Next = IntPtr.Zero,
                     Flags = 0,
+// Broken warning here there is no platform issues here...
+#pragma warning disable CA1416
                     HInstance = Win32.GetWindowLong(window.WindowHandle.RawHandle, Win32.GetWindowLongIndex.GWL_HINSTANCE),
+#pragma warning restore CA1416
                     Hwnd = window.WindowHandle.RawHandle
                 };
 

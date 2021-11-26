@@ -4,9 +4,11 @@ using System.Runtime.InteropServices;
 using Display = System.IntPtr;
 using Drawable = System.IntPtr;
 using Context = System.IntPtr;
+using System.Runtime.Versioning;
 
 namespace SPB.Platform.GLX
 {
+    [SupportedOSPlatform("linux")]
     internal sealed class GLX
     {
         private const string LibraryName = "glx.dll";

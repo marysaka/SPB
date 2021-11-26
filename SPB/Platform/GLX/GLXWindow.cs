@@ -1,7 +1,9 @@
 using SPB.Windowing;
+using System.Runtime.Versioning;
 
 namespace SPB.Platform.GLX
 {
+    [SupportedOSPlatform("linux")]
     public sealed class GLXWindow : SwappableNativeWindowBase
     {
         public override NativeHandle DisplayHandle { get; }

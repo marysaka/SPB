@@ -7,11 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-
+using System.Runtime.Versioning;
 using static SPB.Platform.Win32.Win32;
 
 namespace SPB.Platform.WGL
 {
+    [SupportedOSPlatform("windows")]
     public static class WGLHelper
     {
         private static bool _isInit = false;

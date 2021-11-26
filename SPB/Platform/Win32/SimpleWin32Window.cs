@@ -1,10 +1,11 @@
 ﻿using SPB.Windowing;
 using System;
-
+using System.Runtime.Versioning;
 using static SPB.Platform.Win32.Win32;
 
 namespace SPB.Platform.Win32
 {
+    [SupportedOSPlatform("windows")]
     public class SimpleWin32Window : NativeWindowBase
     {
         public override NativeHandle WindowHandle { get; }

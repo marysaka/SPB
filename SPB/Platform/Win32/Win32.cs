@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 namespace SPB.Platform.Win32
 {
+    [SupportedOSPlatform("windows")]
     internal sealed class Win32
     {
         [Flags]
+        [SupportedOSPlatform("windows")]
         public enum ClassStyles : uint
         {
             CS_BYTEALIGNCLIENT = 0x1000,
@@ -23,6 +26,7 @@ namespace SPB.Platform.Win32
         }
 
         [Flags]
+        [SupportedOSPlatform("windows")]
         public enum WindowStylesEx : uint
         {
             WS_EX_ACCEPTFILES = 0x00000010,
@@ -55,6 +59,7 @@ namespace SPB.Platform.Win32
         }
 
         [Flags]
+        [SupportedOSPlatform("windows")]
         public enum WindowStyles : uint
         {
             WS_BORDER = 0x800000,
@@ -82,6 +87,7 @@ namespace SPB.Platform.Win32
         }
 
         [Flags]
+        [SupportedOSPlatform("windows")]
         public enum ShowWindowFlag : uint
         {
             SW_FORCEMINIMIZE = 11,
@@ -101,6 +107,7 @@ namespace SPB.Platform.Win32
 
 
         [Flags]
+        [SupportedOSPlatform("windows")]
         public enum PixelFormatDescriptorFlags : uint
         {
             PFD_DOUBLEBUFFER = 0x00000001,
@@ -124,6 +131,7 @@ namespace SPB.Platform.Win32
             PFD_STEREO_DONTCARE = 0x80000000,
         }
 
+        [SupportedOSPlatform("windows")]
         public enum PixelType : byte
         {
             PFD_TYPE_RGBA = 0,
@@ -131,6 +139,7 @@ namespace SPB.Platform.Win32
         }
 
         [StructLayout(LayoutKind.Sequential)]
+        [SupportedOSPlatform("windows")]
         public struct PixelFormatDescriptor
         {
             public ushort Size;
@@ -170,6 +179,7 @@ namespace SPB.Platform.Win32
             }
         }
 
+        [SupportedOSPlatform("windows")]
         public enum WindowsMessages : uint
         {
             NULL = 0x0000,
@@ -420,6 +430,7 @@ namespace SPB.Platform.Win32
             HSHELL_WINDOWREPLACED = 13
         }
 
+        [SupportedOSPlatform("windows")]
         public enum GetWindowLongIndex : int
         {
             GWL_WNDPROC = -4,
@@ -435,6 +446,7 @@ namespace SPB.Platform.Win32
         internal delegate IntPtr WindowProc(IntPtr hWnd, WindowsMessages msg, IntPtr wParam, IntPtr lParam);
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [SupportedOSPlatform("windows")]
         public struct WNDCLASSEX
         {
             public int cbSize;

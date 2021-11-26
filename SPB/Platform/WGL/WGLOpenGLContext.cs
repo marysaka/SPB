@@ -4,9 +4,11 @@ using SPB.Graphics.OpenGL;
 using SPB.Windowing;
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 namespace SPB.Platform.WGL
 {
+    [SupportedOSPlatform("windows")]
     public class WGLOpenGLContext : OpenGLContextBase
     {
         private IntPtr _windowHandle;

@@ -1,11 +1,12 @@
 using System;
 using System.Runtime.InteropServices;
-
+using System.Runtime.Versioning;
 using Display = System.IntPtr;
 using Window = System.IntPtr;
 
 namespace SPB.Platform.X11
 {
+    [SupportedOSPlatform("linux")]
     public sealed class X11
     {
         private const string LibraryName = "libX11";

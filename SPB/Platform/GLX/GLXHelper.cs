@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Versioning;
 using SPB.Graphics;
 using SPB.Graphics.OpenGL;
 
@@ -7,6 +8,7 @@ using static SPB.Platform.X11.X11;
 
 namespace SPB.Platform.GLX
 {
+    [SupportedOSPlatform("linux")]
     public sealed class GLXHelper
     {
         public static List<int> FramebufferFormatToVisualAttribute(FramebufferFormat format)
@@ -96,14 +98,13 @@ namespace SPB.Platform.GLX
 
             // TODO: make screen configurable?
             int screen = DefaultScreenLocked(display);
-
-            int fbcount;
-
             unsafe
             {
-                IntPtr* fbConfigs = GLX.ChooseFBConfig(display, screen, visualAttribute.ToArray(), out fbcount);
+                int fbCount;
 
-                if (fbcount > 0 && fbConfigs != null)
+                IntPtr* fbConfigs = GLX.ChooseFBConfig(display, screen, visualAttribute.ToArray(), out fbCount);
+
+                if (fbCount > 0 && fbConfigs != null)
                 {
                     result = *fbConfigs;
 

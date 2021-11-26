@@ -2,9 +2,11 @@ using SPB.Graphics;
 using SPB.Platform.GLX;
 using SPB.Windowing;
 using System;
+using System.Runtime.Versioning;
 
 namespace SPB.Platform.X11
 {
+    [SupportedOSPlatform("linux")]
     public sealed class X11Helper
     {
         public static GLXWindow CreateGLXWindow(NativeHandle display, FramebufferFormat format, int x, int y, int width, int height)
@@ -36,11 +38,12 @@ namespace SPB.Platform.X11
 
                 IntPtr rootWindow = X11.RootWindow(display.RawHandle, screen);
 
-                X11.XSetWindowAttributes attributes = new X11.XSetWindowAttributes();
-
-                attributes.BackgroundPixel = IntPtr.Zero;
-                attributes.BorderPixel = IntPtr.Zero;
-                attributes.ColorMap = X11.CreateColormap(display.RawHandle, rootWindow, visualInfo->Visual, 0);
+                X11.XSetWindowAttributes attributes = new X11.XSetWindowAttributes
+                {
+                    BackgroundPixel = IntPtr.Zero,
+                    BorderPixel = IntPtr.Zero,
+                    ColorMap = X11.CreateColormap(display.RawHandle, rootWindow, visualInfo->Visual, 0)
+                };
                 // TODO: events
 
                 X11.SetWindowValueMask windowValueMask = X11.SetWindowValueMask.ColorMap | X11.SetWindowValueMask.EventMask | X11.SetWindowValueMask.BackPixel | X11.SetWindowValueMask.BorderPixel;

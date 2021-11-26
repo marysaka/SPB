@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-
+using System.Runtime.Versioning;
 using HDC = System.IntPtr;
 using HGLRC = System.IntPtr;
 
 namespace SPB.Platform.WGL
 {
+    [SupportedOSPlatform("windows")]
     internal sealed class WGL
     {
         private const string LibraryName = "OPENGL32.DLL";

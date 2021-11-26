@@ -7,7 +7,6 @@ using SPB.Platform.WGL;
 using SPB.Platform.Win32;
 using SPB.Windowing;
 using System;
-using System.Runtime.InteropServices;
 
 namespace SPB.Platform
 {
@@ -15,13 +14,12 @@ namespace SPB.Platform
     {
         public static SwappableNativeWindowBase CreateOpenGLWindow(FramebufferFormat format, int x, int y, int width, int height)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (OperatingSystem.IsLinux())
             {
                 // TODO: detect X11/Wayland/DRI
                 return X11Helper.CreateGLXWindow(new NativeHandle(X11.X11.DefaultDisplay), format, x, y, width, height);
             }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            else if (OperatingSystem.IsWindows())
             {
                 // TODO pass format
                 return Win32Helper.CreateWindowForWGL(x, y, width, height);
@@ -32,7 +30,7 @@ namespace SPB.Platform
 
         public static OpenGLContextBase CreateOpenGLContext(FramebufferFormat framebufferFormat, int major, int minor, OpenGLContextFlags flags = OpenGLContextFlags.Default, bool directRendering = true, OpenGLContextBase shareContext = null)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (OperatingSystem.IsLinux())
             {
                 // TODO: detect X11/Wayland/DRI
                 if (shareContext != null && !(shareContext is GLXOpenGLContext))
@@ -42,8 +40,7 @@ namespace SPB.Platform
 
                 return new GLXOpenGLContext(framebufferFormat, major, minor, flags, directRendering, (GLXOpenGLContext)shareContext);
             }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            else if (OperatingSystem.IsWindows())
             {
                 if (shareContext != null && !(shareContext is WGLOpenGLContext))
                 {

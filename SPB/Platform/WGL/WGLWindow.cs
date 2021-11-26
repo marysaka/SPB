@@ -1,10 +1,11 @@
 ﻿using SPB.Windowing;
 using System;
-
+using System.Runtime.Versioning;
 using static SPB.Platform.Win32.Win32;
 
 namespace SPB.Platform.WGL
 {
+    [SupportedOSPlatform("windows")]
     public class WGLWindow : SwappableNativeWindowBase
     {
         public override NativeHandle DisplayHandle { get; }

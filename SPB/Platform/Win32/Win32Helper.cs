@@ -3,10 +3,12 @@ using SPB.Platform.WGL;
 using SPB.Windowing;
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using static SPB.Platform.Win32.Win32;
 
 namespace SPB.Platform.Win32
 {
+    [SupportedOSPlatform("windows")]
     public class Win32Helper
     {
         private static bool _isInit = false;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Versioning;
 using SPB.Graphics;
 using SPB.Graphics.Exceptions;
 using SPB.Graphics.OpenGL;
@@ -9,6 +10,7 @@ using static SPB.Platform.X11.X11;
 
 namespace SPB.Platform.GLX
 {
+    [SupportedOSPlatform("linux")]
     public class GLXOpenGLContext : OpenGLContextBase
     {
         private IntPtr _display;
