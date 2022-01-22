@@ -76,7 +76,7 @@ namespace SPB.Platform.X11
 
                 NativeHandle windowHandle = CreateX11Window(display, visualInfo, x, y, width, height);
 
-                return new EGLWindow(helper, fbConfig, display, windowHandle);
+                return new EGLWindow(helper, display, windowHandle);
             }
         }
         public static GLXWindow CreateGLXWindow(NativeHandle display, FramebufferFormat format, int x, int y, int width, int height)

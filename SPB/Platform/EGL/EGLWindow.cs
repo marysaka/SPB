@@ -14,15 +14,19 @@ namespace SPB.Platform.EGL
 
         public bool IsDisposed { get; private set; }
 
-        private EGLHelper _helper;
-        public IntPtr windowSurface;
+        public EGLHelper helper;
 
-        public EGLWindow(EGLHelper helper, IntPtr fbConfig, NativeHandle displayHandle, NativeHandle windowHandle)
+        public EGLWindow(EGLHelper helper_, NativeHandle displayHandle, NativeHandle windowHandle) {
+            helper = helper_;
+            DisplayHandle = displayHandle;
+            WindowHandle = windowHandle;
+
+            _swapInterval = 1;
+        }
+
+        public EGLWindow(NativeHandle displayHandle, NativeHandle windowHandle)
         {
-            _helper = helper;
-            unsafe {
-                windowSurface = helper.eglWindowSurface(windowHandle.RawHandle, fbConfig);
-            }
+            helper = new EGLHelper(displayHandle.RawHandle);
             DisplayHandle = displayHandle;
             WindowHandle = windowHandle;
 
@@ -41,14 +45,14 @@ namespace SPB.Platform.EGL
             set
             {
                 // TODO: exception here
-                EGL.Ext.SwapInterval(_helper.eglDisplay, (int)_swapInterval);
+                EGL.Ext.SwapInterval(helper.eglDisplay, (int)_swapInterval);
                 _swapInterval = value;
             }
         }
 
         public override void SwapBuffers()
         {
-            EGL.SwapBuffers(_helper.eglDisplay, WindowHandle.RawHandle);
+            EGL.SwapBuffers(helper.eglDisplay, WindowHandle.RawHandle);
         }
 
         protected override void Dispose(bool disposing)
