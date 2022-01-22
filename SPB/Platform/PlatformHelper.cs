@@ -17,7 +17,7 @@ namespace SPB.Platform
             if (OperatingSystem.IsLinux())
             {
                 // TODO: detect X11/Wayland/DRI
-                return X11Helper.CreateGLXWindow(new NativeHandle(X11.X11.DefaultDisplay), format, x, y, width, height);
+                return X11Helper.CreateEGLWindow(new NativeHandle(X11.X11.DefaultDisplay), format, x, y, width, height);
             }
             else if (OperatingSystem.IsWindows())
             {

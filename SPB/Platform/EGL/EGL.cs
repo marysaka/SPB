@@ -1,0 +1,141 @@
+using System;
+using System.Runtime.InteropServices;
+
+using Display = System.IntPtr;
+using Config = System.IntPtr;
+using Surface = System.IntPtr;
+using Context = System.IntPtr;
+using System.Runtime.Versioning;
+
+namespace SPB.Platform.EGL
+{
+    [SupportedOSPlatform("linux")]
+    internal sealed class EGL
+    {
+        private const string LibraryName = "libEGL.dll";
+
+        static EGL()
+        {
+            NativeLibrary.SetDllImportResolver(typeof(EGL).Assembly, (name, assembly, path) =>
+            {
+                if (name != LibraryName)
+                {
+                    return IntPtr.Zero;
+                }
+
+                if (!NativeLibrary.TryLoad("libEGL.so.1", assembly, path, out IntPtr result))
+                {
+                    if (!NativeLibrary.TryLoad("libEGL.so", assembly, path, out result))
+                    {
+                        return IntPtr.Zero;
+                    }
+                }
+
+                return result;
+            });
+        }
+
+        [DllImport(LibraryName, EntryPoint = "eglChooseConfig")]
+        public unsafe extern static uint ChooseConfig(Display display, int[] attributes, IntPtr* configs, int config_size, out int num_config);
+
+        [DllImport(LibraryName, EntryPoint = "eglGetConfigAttrib")]
+        public unsafe extern static uint GetConfigAttrib(Display display, Config config, int attribute, out int value);
+
+        [DllImport(LibraryName, EntryPoint = "eglDestroyContext")]
+        public static extern void DestroyContext(Display display, Context context);
+
+        [DllImport(LibraryName, EntryPoint = "eglGetCurrentContext")]
+        public static extern Context GetCurrentContext();
+
+        [DllImport(LibraryName, EntryPoint = "eglSwapBuffers")]
+        public static extern void SwapBuffers(Display display, Surface drawable);
+
+        [DllImport(LibraryName, EntryPoint = "eglMakeCurrent")]
+        public static extern bool MakeCurrent(Display display, Surface drawable, Surface readable, Context context);
+
+        internal enum Attribute : int
+        {
+            COLOR_BUFFER_TYPE = 0x303F,
+            RGB_BUFFER = 0x308E,
+            CONFIG_CAVEAT = 0x3027,
+            RENDERABLE_TYPE = 0x3040,
+            OPENGL_BIT = 0x0008,
+            CONFORMANT = 0x3042,
+            RED_SIZE = 0x3024,
+            GREEN_SIZE = 0x3023,
+            BLUE_SIZE = 0x3022,
+            ALPHA_SIZE = 0x3021,
+            DEPTH_SIZE = 0x3025,
+            STENCIL_SIZE = 0x3026,
+            SAMPLE_BUFFERS = 0x3032,
+            SAMPLES = 0x3031,
+            NONE = 0x3038
+        }
+
+        internal enum RenderTypeMask : int
+        {
+            COLOR_INDEX_BIT_SGIX = 0x00000002,
+            RGBA_BIT = 0x00000001,
+            RGBA_FLOAT_BIT_ARB = 0x00000004,
+            RGBA_BIT_SGIX = 0x00000001,
+            COLOR_INDEX_BIT = 0x00000002,
+        }
+
+        public enum ErrorCode : int
+        {
+            EGL_SUCCESS = 0x3000,
+            EGL_NOT_INITIALIZED = 0x3001,
+            EGL_BAD_ACCESS = 0x3002,
+            EGL_BAD_ALLOC = 0x3003,
+            EGL_BAD_ATTRIBUTE = 0x3004,
+            EGL_BAD_CONFIG = 0x3005,
+            EGL_BAD_CONTEXT = 0x3006,
+            EGL_BAD_CURRENT_SURFACE = 0x3007,
+            EGL_BAD_DISPLAY = 0x3008,
+            EGL_BAD_MATCH = 0x3009,
+            EGL_BAD_NATIVE_PIXMAP = 0x300A,
+            EGL_BAD_NATIVE_WINDOW = 0x300B,
+            EGL_BAD_PARAMETER = 0x300C,
+            EGL_BAD_SURFACE = 0x300D,
+            EGL_CONTEXT_LOST = 0x300E
+        }
+
+
+
+        internal sealed class ARB
+        {
+            public enum ContextFlags : int
+            {
+                DEBUG = 0x31B0
+            }
+
+            public enum ContextProfileFlags : int
+            {
+                CORE_PROFILE = 0x1,
+                COMPATIBILITY_PROFILE = 0x2,
+            }
+
+            public enum CreateContextAttr : int
+            {
+                MAJOR_VERSION = 0x3098,
+                MINOR_VERSION = 0x30FB,
+                FLAGS = 0x30FC,
+                PROFILE_MASK = 0x30FD,
+            }
+
+            [DllImport(LibraryName, EntryPoint = "eglGetProcAddress")]
+            public static extern IntPtr GetProcAddress(string procName);
+
+
+            [DllImport(LibraryName, EntryPoint = "eglCreateContext")]
+            public static extern Context CreateContext(Display display, Config config, Context shareContext, int[] attributes);
+        }
+
+        internal sealed class Ext
+        {
+            [DllImport(LibraryName, EntryPoint = "eglSwapInterval")]
+            public static extern ErrorCode SwapInterval(Display display, int interval);
+        }
+
+    }
+}
