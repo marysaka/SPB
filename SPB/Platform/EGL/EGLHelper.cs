@@ -4,13 +4,22 @@ using System.Runtime.Versioning;
 using SPB.Graphics;
 using SPB.Graphics.OpenGL;
 
-using static SPB.Platform.X11.X11;
-
 namespace SPB.Platform.EGL
 {
     [SupportedOSPlatform("linux")]
     public sealed class EGLHelper
     {
+
+        public IntPtr eglDisplay;
+
+        public EGLHelper(IntPtr display) {
+            unsafe {
+                eglDisplay = EGL.GetPlatformDisplay((int)EGL.Attribute.PLATFORM_X11_KHR, display, (IntPtr *)IntPtr.Zero.ToPointer());
+            }
+            EGL.Initialize(eglDisplay, IntPtr.Zero, IntPtr.Zero);
+            EGL.BindApi((int) EGL.Attribute.OPENGL_API);
+        }
+
         public static List<int> FramebufferFormatToVisualAttribute(FramebufferFormat format)
         {
             List<int> result = new List<int>();
@@ -22,9 +31,6 @@ namespace SPB.Platform.EGL
             result.Add((int)EGL.Attribute.OPENGL_BIT);
             result.Add((int)EGL.Attribute.CONFORMANT);
             result.Add((int)EGL.Attribute.OPENGL_BIT);
-
-            result.Add((int)EGL.Attribute.CONFIG_CAVEAT);
-            result.Add((int)EGL.Attribute.NONE);
 
             if (format.Color.BitsPerPixel > 0)
             {
@@ -55,9 +61,6 @@ namespace SPB.Platform.EGL
 
             if (format.Samples > 0)
             {
-                result.Add((int)EGL.Attribute.SAMPLE_BUFFERS);
-                result.Add(1);
-
                 result.Add((int)EGL.Attribute.SAMPLES);
                 result.Add((int)format.Samples);
             }
@@ -67,7 +70,11 @@ namespace SPB.Platform.EGL
             return result;
         }
 
-        public static IntPtr SelectFBConfig(IntPtr display, FramebufferFormat format)
+        public unsafe IntPtr eglWindowSurface(IntPtr nativeWindowHandle, IntPtr fbConfig) {
+            return EGL.CreateWindowSurface(eglDisplay, fbConfig, nativeWindowHandle, (IntPtr *)IntPtr.Zero.ToPointer());
+        }
+
+        public IntPtr SelectFBConfig(FramebufferFormat format)
         {
             List<int> visualAttribute = FramebufferFormatToVisualAttribute(format);
 
@@ -75,26 +82,28 @@ namespace SPB.Platform.EGL
 
             unsafe
             {
-                int configCnt;
+                int configCnt = 0;
                 int[] attribs = visualAttribute.ToArray();
+               
+                fixed (int* attr = &attribs[0]) {
+                    uint res = EGL.ChooseConfig(eglDisplay, attr, (IntPtr *)IntPtr.Zero.ToPointer(), 0, &configCnt);
 
-                uint res = EGL.ChooseConfig(display, attribs, (IntPtr *)IntPtr.Zero.ToPointer(), 0, out configCnt);
+                    if (configCnt == 0 || res == 0)
+                    {
+                        return IntPtr.Zero;
+                    }
 
-                if (configCnt < 0 || res != 0)
-                {
-                    return IntPtr.Zero;
-                }
-
-                fixed (IntPtr* fbConfig = new IntPtr[configCnt]) {
-                    EGL.ChooseConfig(display, attribs, fbConfig, configCnt, out configCnt);
-                    result = fbConfig[0];
+                    fixed (IntPtr* fbConfig = new IntPtr[configCnt]) {
+                        EGL.ChooseConfig(eglDisplay, attr, fbConfig, configCnt, &configCnt);
+                        result = fbConfig[0];
+                    }
                 }
             }
 
             return result;
         }
 
-        public static List<int> GetContextCreationARBAttribute(OpenGLContextBase context)
+        public List<int> GetContextCreationARBAttribute(OpenGLContextBase context)
         {
             List<int> result = new List<int>();
 

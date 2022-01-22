@@ -36,29 +36,44 @@ namespace SPB.Platform.EGL
         }
 
         [DllImport(LibraryName, EntryPoint = "eglChooseConfig")]
-        public unsafe extern static uint ChooseConfig(Display display, int[] attributes, IntPtr* configs, int config_size, out int num_config);
+        public unsafe extern static uint ChooseConfig(Display display, int* attributes, Config* configs, int config_size, int* num_config);
 
         [DllImport(LibraryName, EntryPoint = "eglGetConfigAttrib")]
         public unsafe extern static uint GetConfigAttrib(Display display, Config config, int attribute, out int value);
 
         [DllImport(LibraryName, EntryPoint = "eglDestroyContext")]
-        public static extern void DestroyContext(Display display, Context context);
+        public static extern uint DestroyContext(Display display, Context context);
 
         [DllImport(LibraryName, EntryPoint = "eglGetCurrentContext")]
         public static extern Context GetCurrentContext();
 
         [DllImport(LibraryName, EntryPoint = "eglSwapBuffers")]
-        public static extern void SwapBuffers(Display display, Surface drawable);
+        public static extern uint SwapBuffers(Display display, Surface drawable);
 
         [DllImport(LibraryName, EntryPoint = "eglMakeCurrent")]
-        public static extern bool MakeCurrent(Display display, Surface drawable, Surface readable, Context context);
+        public static extern uint MakeCurrent(Display display, Surface drawable, Surface readable, Context context);
+
+        [DllImport(LibraryName, EntryPoint = "eglBindAPI")]
+        public static extern uint BindApi(int api);
+
+        [DllImport(LibraryName, EntryPoint = "eglInitialize")]
+        public static extern uint Initialize(Display display, IntPtr major, IntPtr minor);
+
+        [DllImport(LibraryName, EntryPoint = "eglGetPlatformDisplay")]
+        public unsafe static extern Display GetPlatformDisplay(int platform, IntPtr nativeDisplay, IntPtr* attribList);
+
+        [DllImport(LibraryName, EntryPoint = "eglCreateWindowSurface")]
+        public unsafe static extern Surface CreateWindowSurface(Display display, Config config, IntPtr nativeWindow, IntPtr* attribList);
 
         internal enum Attribute : int
         {
+            OPENGL_API = 0x30A2,
             COLOR_BUFFER_TYPE = 0x303F,
             RGB_BUFFER = 0x308E,
             CONFIG_CAVEAT = 0x3027,
             RENDERABLE_TYPE = 0x3040,
+            NATIVE_VISUAL_ID = 0x302E,
+            PLATFORM_X11_KHR = 0x31D5,
             OPENGL_BIT = 0x0008,
             CONFORMANT = 0x3042,
             RED_SIZE = 0x3024,

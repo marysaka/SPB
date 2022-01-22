@@ -1,5 +1,6 @@
 using SPB.Windowing;
 using System.Runtime.Versioning;
+using System;
 
 namespace SPB.Platform.EGL
 {
@@ -13,8 +14,15 @@ namespace SPB.Platform.EGL
 
         public bool IsDisposed { get; private set; }
 
-        public EGLWindow(NativeHandle displayHandle, NativeHandle windowHandle)
+        private EGLHelper _helper;
+        public IntPtr windowSurface;
+
+        public EGLWindow(EGLHelper helper, IntPtr fbConfig, NativeHandle displayHandle, NativeHandle windowHandle)
         {
+            _helper = helper;
+            unsafe {
+                windowSurface = helper.eglWindowSurface(windowHandle.RawHandle, fbConfig);
+            }
             DisplayHandle = displayHandle;
             WindowHandle = windowHandle;
 
@@ -33,14 +41,14 @@ namespace SPB.Platform.EGL
             set
             {
                 // TODO: exception here
-                EGL.Ext.SwapInterval(DisplayHandle.RawHandle, (int)_swapInterval);
+                EGL.Ext.SwapInterval(_helper.eglDisplay, (int)_swapInterval);
                 _swapInterval = value;
             }
         }
 
         public override void SwapBuffers()
         {
-            EGL.SwapBuffers(DisplayHandle.RawHandle, WindowHandle.RawHandle);
+            EGL.SwapBuffers(_helper.eglDisplay, WindowHandle.RawHandle);
         }
 
         protected override void Dispose(bool disposing)

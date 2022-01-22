@@ -43,13 +43,30 @@ namespace SPB.Platform.X11
             return new NativeHandle(rawWindowHandle);
         }
         public static EGLWindow CreateEGLWindow(NativeHandle display, FramebufferFormat format, int x, int y, int width, int height) {
+            EGLHelper helper = new EGLHelper(display.RawHandle);
+            IntPtr fbConfig = helper.SelectFBConfig(format);
+            if (fbConfig == IntPtr.Zero) {
+                throw new NotImplementedException();
+            }
+
             unsafe {
                 int num_visuals = 0;
+                int visualId = 0;
+
+                EGL.EGL.GetConfigAttrib(
+                    helper.eglDisplay,
+                    fbConfig,
+                    (int)EGL.EGL.Attribute.NATIVE_VISUAL_ID,
+                    out visualId
+                );
+
                 X11.XVisualInfo template = new X11.XVisualInfo();
+                template.VisualId = (ulong) visualId;
+
                 X11.XVisualInfo* visualInfo = X11.GetVisualInfo(
                     display.RawHandle,
                     1,
-                    out template,
+                    &template,
                     out num_visuals
                 );
                 
@@ -59,7 +76,7 @@ namespace SPB.Platform.X11
 
                 NativeHandle windowHandle = CreateX11Window(display, visualInfo, x, y, width, height);
 
-                return new EGLWindow(display, windowHandle);
+                return new EGLWindow(helper, fbConfig, display, windowHandle);
             }
         }
         public static GLXWindow CreateGLXWindow(NativeHandle display, FramebufferFormat format, int x, int y, int width, int height)
