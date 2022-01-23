@@ -36,7 +36,6 @@ namespace SPB.Platform.EGL
 
         public IntPtr eglSurface(IntPtr fbConfig) {
             if (_surface != IntPtr.Zero) {
-                Console.WriteLine("true hae bosh");
                 return _surface;
             }
             _surface = helper.eglWindowSurface(WindowHandle.RawHandle, fbConfig);
