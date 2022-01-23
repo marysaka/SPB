@@ -117,10 +117,9 @@ namespace SPB.Platform.EGL
             {
                 if (context.Flags.HasFlag(OpenGLContextFlags.Debug))
                 {
-                    result.Add((int)EGL.ARB.CreateContextAttr.FLAGS);
                     result.Add((int)EGL.ARB.ContextFlags.DEBUG);
+                    result.Add(1);
                 }
-
 
                 result.Add((int)EGL.ARB.CreateContextAttr.PROFILE_MASK);
 
