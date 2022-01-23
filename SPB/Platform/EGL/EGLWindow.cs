@@ -14,31 +14,22 @@ namespace SPB.Platform.EGL
 
         public bool IsDisposed { get; private set; }
 
-        public EGLHelper helper;
+        private EGLHelper _helper;
         private IntPtr _surface = IntPtr.Zero;
 
-        public EGLWindow(EGLHelper helper_, NativeHandle displayHandle, NativeHandle windowHandle) {
-            helper = helper_;
+        public EGLWindow(NativeHandle displayHandle, NativeHandle windowHandle) {
             DisplayHandle = displayHandle;
             WindowHandle = windowHandle;
 
             _swapInterval = 1;
         }
 
-        public EGLWindow(NativeHandle displayHandle, NativeHandle windowHandle)
-        {
-            helper = new EGLHelper(displayHandle.RawHandle);
-            DisplayHandle = displayHandle;
-            WindowHandle = windowHandle;
-
-            _swapInterval = 1;
-        }
-
-        public IntPtr eglSurface(IntPtr fbConfig) {
+        public IntPtr EGLSurface(EGLHelper helper, IntPtr fbConfig) {
             if (_surface != IntPtr.Zero) {
                 return _surface;
             }
-            _surface = helper.eglWindowSurface(WindowHandle.RawHandle, fbConfig);
+            _helper = helper;
+            _surface = _helper.eglWindowSurface(WindowHandle.RawHandle, fbConfig);
             return _surface;
         }
 
@@ -54,14 +45,14 @@ namespace SPB.Platform.EGL
             set
             {
                 // TODO: exception here
-                EGL.Ext.SwapInterval(helper.eglDisplay, (int)_swapInterval);
+                EGL.Ext.SwapInterval(_helper.eglDisplay, (int)_swapInterval);
                 _swapInterval = value;
             }
         }
 
         public override void SwapBuffers()
         {
-            EGL.SwapBuffers(helper.eglDisplay, _surface);
+            EGL.SwapBuffers(_helper.eglDisplay, _surface);
         }
 
         protected override void Dispose(bool disposing)
@@ -71,7 +62,7 @@ namespace SPB.Platform.EGL
                 if (disposing)
                 {
                     if (_surface != IntPtr.Zero) {
-                        EGL.DestroySurface(helper.eglDisplay, _surface);
+                        EGL.DestroySurface(_helper.eglDisplay, _surface);
                     }
                     X11.X11.UnmapWindow(DisplayHandle.RawHandle, WindowHandle.RawHandle);
                     X11.X11.DestroyWindow(DisplayHandle.RawHandle, WindowHandle.RawHandle);

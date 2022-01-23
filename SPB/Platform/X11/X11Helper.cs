@@ -44,6 +44,7 @@ namespace SPB.Platform.X11
         }
         public static EGLWindow CreateEGLWindow(NativeHandle display, FramebufferFormat format, int x, int y, int width, int height) {
             EGLHelper helper = new EGLHelper(display.RawHandle);
+            EGLHelper.BindApi();
             IntPtr fbConfig = helper.SelectFBConfig(format);
             if (fbConfig == IntPtr.Zero) {
                 throw new NotImplementedException();
@@ -76,7 +77,7 @@ namespace SPB.Platform.X11
 
                 NativeHandle windowHandle = CreateX11Window(display, visualInfo, x, y, width, height);
 
-                return new EGLWindow(helper, display, windowHandle);
+                return new EGLWindow(display, windowHandle);
             }
         }
         public static GLXWindow CreateGLXWindow(NativeHandle display, FramebufferFormat format, int x, int y, int width, int height)

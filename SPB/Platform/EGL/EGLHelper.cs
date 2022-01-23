@@ -26,6 +26,9 @@ namespace SPB.Platform.EGL
                 EGL.Initialize(eglDisplay, IntPtr.Zero, IntPtr.Zero);
                 init = true;
             }
+        }
+
+        public static void BindApi() {
             EGL.BindApi((int) EGL.Attribute.OPENGL_API);
         }
 

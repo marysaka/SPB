@@ -62,6 +62,7 @@ namespace SPB.Platform.EGL
             }
 
             _helper = new EGLHelper(display);
+            EGLHelper.BindApi();
 
             IntPtr fbConfig = _helper.SelectFBConfig(FramebufferFormat);
 
@@ -112,7 +113,7 @@ namespace SPB.Platform.EGL
                     throw new InvalidOperationException("MakeCurrent() should be used with a window originated from the same display.");
                 }
 
-                IntPtr surface = ((EGLWindow) window).eglSurface(_fbConfig);
+                IntPtr surface = ((EGLWindow) window).EGLSurface(_helper, _fbConfig);
 
                 success = EGL.MakeCurrent(_helper.eglDisplay, surface, surface, ContextHandle) != 0;
             }
