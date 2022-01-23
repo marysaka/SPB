@@ -15,6 +15,7 @@ namespace SPB.Platform.EGL
         public bool IsDisposed { get; private set; }
 
         public EGLHelper helper;
+        private IntPtr _surface = IntPtr.Zero;
 
         public EGLWindow(EGLHelper helper_, NativeHandle displayHandle, NativeHandle windowHandle) {
             helper = helper_;
@@ -31,6 +32,15 @@ namespace SPB.Platform.EGL
             WindowHandle = windowHandle;
 
             _swapInterval = 1;
+        }
+
+        public IntPtr eglSurface(IntPtr fbConfig) {
+            if (_surface != IntPtr.Zero) {
+                Console.WriteLine("true hae bosh");
+                return _surface;
+            }
+            _surface = helper.eglWindowSurface(WindowHandle.RawHandle, fbConfig);
+            return _surface;
         }
 
         public override uint SwapInterval
@@ -52,7 +62,7 @@ namespace SPB.Platform.EGL
 
         public override void SwapBuffers()
         {
-            EGL.SwapBuffers(helper.eglDisplay, WindowHandle.RawHandle);
+            EGL.SwapBuffers(helper.eglDisplay, _surface);
         }
 
         protected override void Dispose(bool disposing)
@@ -61,6 +71,9 @@ namespace SPB.Platform.EGL
             {
                 if (disposing)
                 {
+                    if (_surface != IntPtr.Zero) {
+                        EGL.DestroySurface(helper.eglDisplay, _surface);
+                    }
                     X11.X11.UnmapWindow(DisplayHandle.RawHandle, WindowHandle.RawHandle);
                     X11.X11.DestroyWindow(DisplayHandle.RawHandle, WindowHandle.RawHandle);
                 }

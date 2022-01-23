@@ -54,15 +54,14 @@ namespace SPB.Platform.EGL
             {
                 // TODO: Do we want to handle the window providing us a framebuffer format?
                 display = window.DisplayHandle.RawHandle;
-                _helper = ((EGLWindow) window).helper;
-            } else {
-                _helper = new EGLHelper(display);
             }
 
             if (display == IntPtr.Zero)
             {
                 display = DefaultDisplay;
             }
+
+            _helper = new EGLHelper(display);
 
             IntPtr fbConfig = _helper.SelectFBConfig(FramebufferFormat);
 
@@ -88,6 +87,7 @@ namespace SPB.Platform.EGL
 
             if (ContextHandle == IntPtr.Zero)
             {
+                Console.WriteLine("ERR {0}", EGL.GetError());
                 throw new ContextException("CreateContext() failed.");
             }
         }
@@ -111,12 +111,12 @@ namespace SPB.Platform.EGL
                 {
                     throw new InvalidOperationException("MakeCurrent() should be used with a window originated from the same display.");
                 }
-                IntPtr surface = ((EGLWindow) window).helper.eglWindowSurface(window.WindowHandle.RawHandle, _fbConfig);
+
+                IntPtr surface = ((EGLWindow) window).eglSurface(_fbConfig);
 
                 success = EGL.MakeCurrent(_helper.eglDisplay, surface, surface, ContextHandle) != 0;
             }
             else
-
             {
                 success = EGL.MakeCurrent(_helper.eglDisplay, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero) != 0;
             }

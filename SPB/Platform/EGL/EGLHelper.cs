@@ -9,14 +9,23 @@ namespace SPB.Platform.EGL
     [SupportedOSPlatform("linux")]
     public sealed class EGLHelper
     {
+        public static IntPtr _eglDisplay;
+        private static bool init;
 
-        public IntPtr eglDisplay;
+        public IntPtr eglDisplay {
+            get {
+                return _eglDisplay;
+            }
+        }
 
         public EGLHelper(IntPtr display) {
-            unsafe {
-                eglDisplay = EGL.GetPlatformDisplay((int)EGL.Attribute.PLATFORM_X11_KHR, display, (IntPtr *)IntPtr.Zero.ToPointer());
+            if (!init) {
+                unsafe {
+                    _eglDisplay = EGL.GetPlatformDisplay((int)EGL.Attribute.PLATFORM_X11_KHR, display, (IntPtr *)IntPtr.Zero.ToPointer());
+                }
+                EGL.Initialize(eglDisplay, IntPtr.Zero, IntPtr.Zero);
+                init = true;
             }
-            EGL.Initialize(eglDisplay, IntPtr.Zero, IntPtr.Zero);
             EGL.BindApi((int) EGL.Attribute.OPENGL_API);
         }
 
@@ -26,6 +35,9 @@ namespace SPB.Platform.EGL
 
             result.Add((int)EGL.Attribute.COLOR_BUFFER_TYPE);
             result.Add((int)EGL.Attribute.RGB_BUFFER);
+
+            result.Add((int)EGL.Attribute.SURFACE_TYPE);
+            result.Add((int)EGL.Attribute.WINDOW_BIT);
 
             result.Add((int)EGL.Attribute.RENDERABLE_TYPE);
             result.Add((int)EGL.Attribute.OPENGL_BIT);

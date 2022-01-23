@@ -65,6 +65,12 @@ namespace SPB.Platform.EGL
         [DllImport(LibraryName, EntryPoint = "eglCreateWindowSurface")]
         public unsafe static extern Surface CreateWindowSurface(Display display, Config config, IntPtr nativeWindow, IntPtr* attribList);
 
+        [DllImport(LibraryName, EntryPoint = "eglDestroySurface")]
+        public unsafe static extern uint DestroySurface(Display display, Surface surface);
+
+        [DllImport(LibraryName, EntryPoint = "eglGetError")]
+        public static extern int GetError();
+
         internal enum Attribute : int
         {
             OPENGL_API = 0x30A2,
@@ -84,6 +90,9 @@ namespace SPB.Platform.EGL
             STENCIL_SIZE = 0x3026,
             SAMPLE_BUFFERS = 0x3032,
             SAMPLES = 0x3031,
+            SURFACE_TYPE = 0x3033,
+            WINDOW_BIT = 0x4,
+            PBUFFER_BIT = 0x0001,
             NONE = 0x3038
         }
 
