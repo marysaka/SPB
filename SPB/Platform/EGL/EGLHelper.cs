@@ -47,6 +47,9 @@ namespace SPB.Platform.EGL
             result.Add((int)EGL.Attribute.CONFORMANT);
             result.Add((int)EGL.Attribute.OPENGL_BIT);
 
+            result.Add((int)EGL.Attribute.CONFIG_CAVEAT);
+            result.Add((int)EGL.Attribute.NONE);
+
             if (format.Color.BitsPerPixel > 0)
             {
                 result.Add((int)EGL.Attribute.RED_SIZE);
