@@ -1,7 +1,7 @@
 using SPB.Graphics;
 using SPB.Graphics.Exceptions;
 using SPB.Graphics.OpenGL;
-using SPB.Platform.GLX;
+using SPB.Platform.EGL;
 using SPB.Platform.X11;
 using SPB.Platform.WGL;
 using SPB.Platform.Win32;
@@ -17,7 +17,7 @@ namespace SPB.Platform
             if (OperatingSystem.IsLinux())
             {
                 // TODO: detect X11/Wayland/DRI
-                return X11Helper.CreateGLXWindow(new NativeHandle(X11.X11.DefaultDisplay), format, x, y, width, height);
+                return X11Helper.CreateEGLWindow(new NativeHandle(X11.X11.DefaultDisplay), format, x, y, width, height);
             }
             else if (OperatingSystem.IsWindows())
             {
@@ -32,13 +32,11 @@ namespace SPB.Platform
         {
             if (OperatingSystem.IsLinux())
             {
-                // TODO: detect X11/Wayland/DRI
-                if (shareContext != null && !(shareContext is GLXOpenGLContext))
+                if (shareContext != null && !(shareContext is EGLOpenGLContext))
                 {
-                    throw new ContextException($"shared context must be of type {typeof(GLXOpenGLContext).Name}.");
+                    throw new ContextException($"shared context must be of type {typeof(EGLOpenGLContext).Name}.");
                 }
-
-                return new GLXOpenGLContext(framebufferFormat, major, minor, flags, directRendering, (GLXOpenGLContext)shareContext);
+                return new EGLOpenGLContext(framebufferFormat, major, minor, flags, directRendering, shareContext);
             }
             else if (OperatingSystem.IsWindows())
             {
