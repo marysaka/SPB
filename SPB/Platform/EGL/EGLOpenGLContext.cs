@@ -29,7 +29,10 @@ namespace SPB.Platform.EGL
                 {
                     MakeCurrent(null);
 
-                    EGL.DestroyContext(_display, ContextHandle);
+                    if (EGL.BindAPI(EGL.ApiType.OPENGL_API))
+                    {
+                        EGL.DestroyContext(_display, ContextHandle);
+                    }
                 }
 
                 IsDisposed = true;
