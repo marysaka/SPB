@@ -10,7 +10,8 @@ namespace SPB.Platform.X11
     [SupportedOSPlatform("linux")]
     public sealed class X11Helper
     {
-        private static unsafe NativeHandle CreateX11Window(NativeHandle display, X11.XVisualInfo* visualInfo, int x, int y, int width, int height) {
+        private static unsafe NativeHandle CreateX11Window(NativeHandle display, X11.XVisualInfo* visualInfo, int x, int y, int width, int height)
+        {
             if (visualInfo == null)
             {
                 throw new NotImplementedException();
@@ -42,15 +43,19 @@ namespace SPB.Platform.X11
 
             return new NativeHandle(rawWindowHandle);
         }
-        public static EGLWindow CreateEGLWindow(NativeHandle display, FramebufferFormat format, int x, int y, int width, int height) {
+
+        public static EGLWindow CreateEGLWindow(NativeHandle display, FramebufferFormat format, int x, int y, int width, int height)
+        {
             EGLHelper helper = new EGLHelper(display.RawHandle);
             EGLHelper.BindApi();
             IntPtr fbConfig = helper.SelectFBConfig(format);
-            if (fbConfig == IntPtr.Zero) {
+            if (fbConfig == IntPtr.Zero)
+            {
                 throw new NotImplementedException();
             }
 
-            unsafe {
+            unsafe
+            {
                 int num_visuals = 0;
                 int visualId = 0;
 
@@ -71,7 +76,8 @@ namespace SPB.Platform.X11
                     out num_visuals
                 );
                 
-                if (num_visuals != 1) {
+                if (num_visuals != 1)
+                {
                     throw new NotImplementedException();
                 }
 

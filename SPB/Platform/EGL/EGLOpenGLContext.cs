@@ -88,8 +88,7 @@ namespace SPB.Platform.EGL
 
             if (ContextHandle == IntPtr.Zero)
             {
-                Console.WriteLine("ERR {0}", EGL.GetError());
-                throw new ContextException("CreateContext() failed.");
+                throw new ContextException(String.Format("CreateContext() failed: {0}", EGL.GetError()));
             }
         }
 

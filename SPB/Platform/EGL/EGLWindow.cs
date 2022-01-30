@@ -17,27 +17,27 @@ namespace SPB.Platform.EGL
         private EGLHelper _helper;
         private IntPtr _surface = IntPtr.Zero;
 
-        public EGLWindow(NativeHandle displayHandle, NativeHandle windowHandle) {
+        public EGLWindow(NativeHandle displayHandle, NativeHandle windowHandle)
+        {
             DisplayHandle = displayHandle;
             WindowHandle = windowHandle;
 
             _swapInterval = 1;
         }
 
-        public IntPtr EGLSurface(EGLHelper helper, IntPtr fbConfig) {
-            if (_surface != IntPtr.Zero) {
+        public IntPtr EGLSurface(EGLHelper helper, IntPtr fbConfig)
+        {
+            if (_surface != IntPtr.Zero)
+            {
                 return _surface;
             }
             _helper = helper;
-            _surface = _helper.eglWindowSurface(WindowHandle.RawHandle, fbConfig);
+            _surface = _helper.EGLWindowSurface(WindowHandle.RawHandle, fbConfig);
             return _surface;
         }
 
         public override uint SwapInterval
         {
-            // TODO: check extension support
-            // TODO: support MESA and SGI
-            // TODO: use glXQueryDrawable to query swap interval when GLX_EXT_swap_control is supported.
             get
             {
                 return _swapInterval;
@@ -61,7 +61,8 @@ namespace SPB.Platform.EGL
             {
                 if (disposing)
                 {
-                    if (_surface != IntPtr.Zero) {
+                    if (_surface != IntPtr.Zero)
+                    {
                         EGL.DestroySurface(_helper.eglDisplay, _surface);
                     }
                     X11.X11.UnmapWindow(DisplayHandle.RawHandle, WindowHandle.RawHandle);

@@ -12,15 +12,20 @@ namespace SPB.Platform.EGL
         public static IntPtr _eglDisplay;
         private static bool init;
 
-        public IntPtr eglDisplay {
-            get {
+        public IntPtr eglDisplay
+        {
+            get
+            {
                 return _eglDisplay;
             }
         }
 
-        public EGLHelper(IntPtr display) {
-            if (!init) {
-                unsafe {
+        public EGLHelper(IntPtr display)
+        {
+            if (!init)
+            {
+                unsafe
+                {
                     _eglDisplay = EGL.GetPlatformDisplay((int)EGL.Attribute.PLATFORM_X11_KHR, display, (IntPtr *)IntPtr.Zero.ToPointer());
                 }
                 EGL.Initialize(eglDisplay, IntPtr.Zero, IntPtr.Zero);
@@ -28,7 +33,8 @@ namespace SPB.Platform.EGL
             }
         }
 
-        public static void BindApi() {
+        public static void BindApi()
+        {
             EGL.BindApi((int) EGL.Attribute.OPENGL_API);
         }
 
@@ -88,7 +94,8 @@ namespace SPB.Platform.EGL
             return result;
         }
 
-        public unsafe IntPtr eglWindowSurface(IntPtr nativeWindowHandle, IntPtr fbConfig) {
+        public unsafe IntPtr EGLWindowSurface(IntPtr nativeWindowHandle, IntPtr fbConfig)
+        {
             return EGL.CreateWindowSurface(eglDisplay, fbConfig, nativeWindowHandle, (IntPtr *)IntPtr.Zero.ToPointer());
         }
 
@@ -103,7 +110,8 @@ namespace SPB.Platform.EGL
                 int configCnt = 0;
                 int[] attribs = visualAttribute.ToArray();
                
-                fixed (int* attr = &attribs[0]) {
+                fixed (int* attr = &attribs[0])
+                {
                     uint res = EGL.ChooseConfig(eglDisplay, attr, (IntPtr *)IntPtr.Zero.ToPointer(), 0, &configCnt);
 
                     if (configCnt == 0 || res == 0)
@@ -111,7 +119,8 @@ namespace SPB.Platform.EGL
                         return IntPtr.Zero;
                     }
 
-                    fixed (IntPtr* fbConfig = new IntPtr[configCnt]) {
+                    fixed (IntPtr* fbConfig = new IntPtr[configCnt])
+                    {
                         EGL.ChooseConfig(eglDisplay, attr, fbConfig, configCnt, &configCnt);
                         result = fbConfig[0];
                     }
