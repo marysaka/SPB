@@ -173,7 +173,7 @@ namespace SPB.Graphics.Vulkan
                 // FIXME: We assume Linux == X11 for now.
                 else if (OperatingSystem.IsLinux())
                 {
-                    if (!IsExtensionPresent("VK_KHR_xcb_surface"))
+                    if (!IsExtensionPresent("VK_KHR_xcb_surface") || !X11.IsXcbAvailable())
                     {
                         if (!IsExtensionPresent("VK_KHR_xlib_surface"))
                         {
@@ -216,7 +216,7 @@ namespace SPB.Graphics.Vulkan
             if (OperatingSystem.IsLinux())
             {
                 // Prefer XCB as xlib implementation was known to have ICD issues.
-                if (IsExtensionPresent("VK_KHR_xcb_surface"))
+                if (IsExtensionPresent("VK_KHR_xcb_surface") && X11.IsXcbAvailable())
                 {
                     extensions.Add("VK_KHR_xcb_surface");
                 }
@@ -266,7 +266,7 @@ namespace SPB.Graphics.Vulkan
 
             if (OperatingSystem.IsLinux())
             {
-                if (IsExtensionPresent("VK_KHR_xcb_surface"))
+                if (IsExtensionPresent("VK_KHR_xcb_surface") && X11.IsXcbAvailable())
                 {
                     vkCreateXcbSurfaceKHRDelegate vkCreateXcbSurfaceKHR = Marshal.GetDelegateForFunctionPointer<vkCreateXcbSurfaceKHRDelegate>(_vkGetInstanceProcAddr(vulkanInstance, "vkCreateXcbSurfaceKHR"));
 

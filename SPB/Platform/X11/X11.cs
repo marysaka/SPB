@@ -10,6 +10,7 @@ namespace SPB.Platform.X11
     public sealed class X11
     {
         private const string LibraryName = "libX11";
+        private const string XcbLibraryName = "libX11-xcb";
 
         public static object Lock = new object();
 
@@ -67,6 +68,18 @@ namespace SPB.Platform.X11
 
         [DllImport(LibraryName, EntryPoint = "XCreateColormap")]
         public static extern IntPtr CreateColormap(Display display, Window window, IntPtr visual, int alloc);
+
+        public static bool IsXcbAvailable()
+        {
+            if (NativeLibrary.TryLoad(XcbLibraryName, out IntPtr handle))
+            {
+                NativeLibrary.Free(handle);
+
+                return true;
+            }
+
+            return false;
+        }
 
         [DllImport("libX11-xcb", EntryPoint = "XGetXCBConnection")]
         public extern static IntPtr GetXCBConnection(Display display);
