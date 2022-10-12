@@ -11,56 +11,94 @@ namespace SPB.Platform.Cocoa;
 [SupportedOSPlatform("macos")]
 public class SimpleCocoaWindow : NativeWindowBase
 {
-    // NSWindow pointer wrapper
+    // NSWindow pointer wrapper.
     public override NativeHandle WindowHandle { get; }
 
-    // CAMetalLayer pointer wrapper
+    // CAMetalLayer pointer wrapper.
     public NativeHandle MetalLayerHandle { get; private set; }
 
     public override NativeHandle DisplayHandle => throw new NotImplementedException();
 
     /// <summary>
     /// Constructs instance of this class.
+    ///
+    /// If NSWindow pointer is given its top-level content view is used to setup
+    /// Metal layer.
+    /// If NSView pointer is given, window it belongs is extracted from NSView.window
+    /// property, Metal layer is set up for the given NSView object.
     /// </summary>
-    /// <param name="windowHandle">NSWindow native pointer</param>
+    /// <param name="handle">Native pointer</param>
     /// <param name="initMetalLayer">Flag indicating need to acquire Metal layer</param>
-    public SimpleCocoaWindow(NativeHandle windowHandle, bool initMetalLayer = true)
+    public SimpleCocoaWindow(NativeHandle handle, bool initMetalLayer = true)
     {
-        WindowHandle = windowHandle;
-
-        // Sanity check
-        ObjectiveC.EnsureIsKindOfClass(windowHandle.RawHandle, "NSWindow");
+        WindowHandle = GetNsWindow(handle);
 
         if (initMetalLayer)
         {
-            InitMetalLayer();
+            var view = GetNsView(handle);
+            InitMetalLayer(view.RawHandle);
         }
     }
 
-    private void InitMetalLayer()
+    /// <summary>
+    /// This method returns content view for a given object.
+    /// If object is of NSWindow type then its top level content view is returned.
+    /// If object is of NSView type then it is returned as is.
+    /// </summary>
+    /// <param name="handle">UI object pointer to retrieve view from</param>
+    /// <returns>NSView pointer wrapped into NativeHandle</returns>
+    private NativeHandle GetNsView(NativeHandle handle)
     {
-        // assuming that handles is NSWindow
-        // 1. get top-level NSView
-        // 2. get its layer
-        // 3. if it is CAMetalLayer, we have what we need
-        // 4. make it CAMetalLayer
+        if (ObjectiveC.IsKindOfClass(handle.RawHandle, "NSView"))
+        {
+            return handle;
+        }
 
-        // 1. get top-level NSView
         var contentView = ObjectiveC.GetIntPtrValue(WindowHandle.RawHandle, "contentView");
 
         ObjectiveC.EnsureIsKindOfClass(contentView, "NSView");
+        return new NativeHandle(contentView);
+    }
 
-        // 2. get its layer
+    /// <summary>
+    /// This method returns window for a given object.
+    /// If object is of NSWindow type then it is returned as is.
+    /// If object is of NSView type then its view window object or null pointer,
+    /// if view is not installed into window.
+    /// </summary>
+    /// <param name="handle">UI object pointer to retrieve window from</param>
+    /// <returns>NSWindow pointer wrapped into NativeHandle</returns>
+    private NativeHandle GetNsWindow(NativeHandle handle)
+    {
+        if (ObjectiveC.IsKindOfClass(handle.RawHandle, "NSView"))
+        {
+            IntPtr window = ObjectiveC.GetIntPtrValue(handle.RawHandle, "window");
+            return new NativeHandle(window);
+        }
+
+        ObjectiveC.EnsureIsKindOfClass(handle.RawHandle, "NSWindow");
+        return handle;
+    }
+
+    /// <summary>
+    /// This method initialises Metal layer of view object if needed.
+    /// </summary>
+    /// <param name="contentView">NSView object to initialise Metal layer</param>
+    private void InitMetalLayer(IntPtr contentView)
+    {
+        ObjectiveC.EnsureIsKindOfClass(contentView, "NSView");
+
+        // 1. Get view layer.
         var layer = ObjectiveC.GetIntPtrValue(contentView, "layer");
 
-        // 3. if it is CAMetalLayer, we have what we need
+        // 2. If it is CAMetalLayer, we have what we need.
         if (ObjectiveC.IsKindOfClass(contentView, "CAMetalLayer"))
         {
             MetalLayerHandle = new NativeHandle(layer);
             return;
         }
 
-        // 4. make it CAMetalLayer
+        // 3. Make it CAMetalLayer.
         // https://developer.apple.com/documentation/quartzcore/cametallayer?language=objc
         Console.Out.WriteLine("Replacing original NSView layer with CAMetalLayer");
 
@@ -74,7 +112,7 @@ public class SimpleCocoaWindow : NativeWindowBase
 
     protected override void Dispose(bool disposing)
     {
-        // Do nothing as no actual resource is owned
+        // Do nothing as no actual resource is owned.
     }
 
     public override void Show()

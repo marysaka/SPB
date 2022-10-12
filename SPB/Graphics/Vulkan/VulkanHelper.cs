@@ -19,21 +19,21 @@ namespace SPB.Graphics.Vulkan
 
         private static IntPtr _vulkanHandle;
 
-        // Platform specific library hints
-        // Win32
+        // Platform specific library hints.
+        // For Win32:
         private static readonly string[] VulkanLibraryNameWindows =
         {
             "vulkan-1.dll"
         };
 
-        // Linux
+        // For Linux:
         private static readonly string[] VulkanLibraryNameLinux =
         {
             "libvulkan.so.1"
         };
 
-        // macOS: try MoltenVK first (see: https://github.com/KhronosGroup/MoltenVK),
-        // then try libvulkan as a last chance option
+        // For macOS: try MoltenVK first (see: https://github.com/KhronosGroup/MoltenVK),
+        // then try libvulkan as a last chance option.
         private static readonly string[] VulkanLibraryNameMacOS =
         {
             "libMoltenVk.dylib",
@@ -53,7 +53,7 @@ namespace SPB.Graphics.Vulkan
             public uint SpecVersion;
         }
 
-        // Extensions related structure type IDs
+        // Extensions related structure type IDs.
         // See: https://github.com/KhronosGroup/Vulkan-Headers/blob/main/include/vulkan/vulkan_core.h
         private const uint VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR = 1000004000;
         private const uint VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR = 1000005000;
@@ -161,7 +161,7 @@ namespace SPB.Graphics.Vulkan
                 return false;
             }
 
-            // return on the first successfully loaded library
+            // Returns on the first successfully loaded library.
             foreach (var libraryName in libraryNameHints)
             {
                 if (NativeLibrary.TryLoad(libraryName, out vulkanHandle))
