@@ -19,7 +19,7 @@ namespace SPB.Graphics.Vulkan
 
         private const string VulkanLibraryNameWindows = "vulkan-1.dll";
         private const string VulkanLibraryNameLinux = "libvulkan.so.1";
-        private const string VulkanLibraryNameMacOS = "libvulkan.dylib";
+        private const string VulkanLibraryNameMacOS = "libMoltenVK.dylib";
 
         private static string[] _extensions;
 
@@ -37,6 +37,8 @@ namespace SPB.Graphics.Vulkan
         private const uint VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR = 1000004000;
         private const uint VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR = 1000005000;
         private const uint VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR = 1000009000;
+        private const uint VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK = 1000123000;
+        private const uint VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT = 1000217000;
 
         private unsafe struct VkWin32SurfaceCreateInfoKHR
         {
@@ -65,10 +67,28 @@ namespace SPB.Graphics.Vulkan
             public IntPtr Window;
         }
 
+        private unsafe struct VkMacOSSurfaceCreateInfoMVK
+        {
+            public uint StructType;
+            public IntPtr Next;
+            public uint Flags;
+            public IntPtr ViewOrLayer;
+        }
+
+        private unsafe struct VkMetalSurfaceCreateInfoEXT
+        {
+            public uint StructType;
+            public IntPtr Next;
+            public uint Flags;
+            public IntPtr Layer;
+        }
+
         private unsafe delegate int vkEnumerateInstanceExtensionPropertiesDelegate(string layerName, out uint layerCount, VkExtensionProperty* properties);
         private unsafe delegate int vkCreateWin32SurfaceKHRDelegate(IntPtr instance, ref VkWin32SurfaceCreateInfoKHR createInfo, IntPtr allocator, out IntPtr surface);
         private unsafe delegate int vkCreateXlibSurfaceKHRDelegate(IntPtr instance, ref VkXlibSurfaceCreateInfoKHR createInfo, IntPtr allocator, out IntPtr surface);
         private unsafe delegate int vkCreateXcbSurfaceKHRDelegate(IntPtr instance, ref VkXcbSurfaceCreateInfoKHR createInfo, IntPtr allocator, out IntPtr surface);
+        private unsafe delegate int vkCreateMacOSSurfaceMVKDelegate(IntPtr instance, ref VkMacOSSurfaceCreateInfoMVK createInfo, IntPtr allocator, out IntPtr surface);
+        private unsafe delegate int vkCreateMetalSurfaceEXTDelegate(IntPtr instance, ref VkMetalSurfaceCreateInfoEXT createInfo, IntPtr allocator, out IntPtr surface);
 
         private static vkEnumerateInstanceExtensionPropertiesDelegate _vkEnumerateInstanceExtensionProperties;
 
@@ -183,7 +203,7 @@ namespace SPB.Graphics.Vulkan
                 }
                 else if (OperatingSystem.IsMacOS())
                 {
-                    isVulkanUsable &= IsExtensionPresent("VK_MVK_macos_surface");
+                    isVulkanUsable &= IsExtensionPresent("VK_EXT_metal_surface") || IsExtensionPresent("VK_MVK_macos_surface");
                 }
 
                 if (!isVulkanUsable)
@@ -228,7 +248,14 @@ namespace SPB.Graphics.Vulkan
 
             if (OperatingSystem.IsMacOS())
             {
-                extensions.Add("VK_MVK_macos_surface");
+                if (IsExtensionPresent("VK_EXT_metal_surface"))
+                {
+                    extensions.Add("VK_EXT_metal_surface");
+                }
+                else
+                {
+                    extensions.Add("VK_MVK_macos_surface");
+                }
             }
 
             return extensions.ToArray();
@@ -306,6 +333,52 @@ namespace SPB.Graphics.Vulkan
                     if (res != 0)
                     {
                         throw new PlatformException($"vkCreateXlibSurfaceKHR failed: {res}");
+                    }
+
+                    return surface;
+                }
+            }
+
+            if (OperatingSystem.IsMacOS())
+            {
+                if (IsExtensionPresent("VK_EXT_metal_surface"))
+                {
+                    vkCreateMetalSurfaceEXTDelegate vkCreateMetalSurfaceEXT = Marshal.GetDelegateForFunctionPointer<vkCreateMetalSurfaceEXTDelegate>(_vkGetInstanceProcAddr(vulkanInstance, "vkCreateMetalSurfaceEXT"));
+
+                    VkMetalSurfaceCreateInfoEXT creationInfo = new VkMetalSurfaceCreateInfoEXT
+                    {
+                        StructType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT,
+                        Next = IntPtr.Zero,
+                        Flags = 0,
+                        Layer = window.WindowHandle.RawHandle
+                    };
+
+                    int res = vkCreateMetalSurfaceEXT(vulkanInstance, ref creationInfo, IntPtr.Zero, out IntPtr surface);
+
+                    if (res != 0)
+                    {
+                        throw new PlatformException($"vkCreateMetalSurfaceEXT failed: {res}");
+                    }
+
+                    return surface;
+                }
+                else
+                {
+                    vkCreateMacOSSurfaceMVKDelegate vkCreateMacOSSurfaceMVK = Marshal.GetDelegateForFunctionPointer<vkCreateMacOSSurfaceMVKDelegate>(_vkGetInstanceProcAddr(vulkanInstance, "vkCreateMacOSSurfaceMVK"));
+
+                    VkMacOSSurfaceCreateInfoMVK creationInfo = new VkMacOSSurfaceCreateInfoMVK
+                    {
+                        StructType = VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK,
+                        Next = IntPtr.Zero,
+                        Flags = 0,
+                        ViewOrLayer = window.WindowHandle.RawHandle
+                    };
+
+                    int res = vkCreateMacOSSurfaceMVK(vulkanInstance, ref creationInfo, IntPtr.Zero, out IntPtr surface);
+
+                    if (res != 0)
+                    {
+                        throw new PlatformException($"vkCreateMacOSSurfaceMVK failed: {res}");
                     }
 
                     return surface;

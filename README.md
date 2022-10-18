@@ -4,7 +4,7 @@ This is an API providing simple ways to handle native window and graphic context
 
 Graphic context support:
 - OpenGL
-- Vulkan (surface creation for Windows, Xlib and XCB)
+- Vulkan (surface creation for Windows, Xlib, XCB and Metal)
 
 Platform support:
 
