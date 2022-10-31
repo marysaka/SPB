@@ -71,17 +71,10 @@ namespace SPB.Platform.X11
 
         public static bool IsXcbAvailable()
         {
-            if (NativeLibrary.TryLoad(XcbLibraryName, out IntPtr handle))
-            {
-                NativeLibrary.Free(handle);
-
-                return true;
-            }
-
-            return false;
+            return PlatformHelper.IsLibraryAvailable(XcbLibraryName);
         }
 
-        [DllImport("libX11-xcb", EntryPoint = "XGetXCBConnection")]
+        [DllImport(XcbLibraryName, EntryPoint = "XGetXCBConnection")]
         public extern static IntPtr GetXCBConnection(Display display);
 
         public enum XEventName
@@ -351,6 +344,8 @@ namespace SPB.Platform.X11
 
         static X11()
         {
+            PlatformHelper.EnsureResolverRegistered();
+
             InitThreads();
 
             SetErrorHandler(_errorHandlerDelegate);

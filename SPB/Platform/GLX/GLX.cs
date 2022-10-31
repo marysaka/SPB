@@ -11,27 +11,11 @@ namespace SPB.Platform.GLX
     [SupportedOSPlatform("linux")]
     internal sealed class GLX
     {
-        private const string LibraryName = "glx.dll";
+        private const string LibraryName = "glx";
 
         static GLX()
         {
-            NativeLibrary.SetDllImportResolver(typeof(GLX).Assembly, (name, assembly, path) =>
-            {
-                if (name != LibraryName)
-                {
-                    return IntPtr.Zero;
-                }
-
-                if (!NativeLibrary.TryLoad("libGL.so.1", assembly, path, out IntPtr result))
-                {
-                    if (!NativeLibrary.TryLoad("libGL.so", assembly, path, out result))
-                    {
-                        return IntPtr.Zero;
-                    }
-                }
-
-                return result;
-            });
+            PlatformHelper.EnsureResolverRegistered();
         }
 
         [DllImport(LibraryName, EntryPoint = "glXChooseFBConfig")]

@@ -7,11 +7,75 @@ using SPB.Platform.WGL;
 using SPB.Platform.Win32;
 using SPB.Windowing;
 using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace SPB.Platform
 {
     public sealed class PlatformHelper
     {
+        private static bool _isResolverRegistered;
+
+        private static readonly Dictionary<string, List<string>> LibrariesMapping = new Dictionary<string, List<string>>()
+        {
+            ["glx"] = new List<string> { "libGL.so.1", "libGL.so" },
+
+            // Required for Fedora/CentOS/RedHat
+            ["libX11"] = new List<string> { "libX11.so.6", "libX11.so" },
+
+            // Required for Fedora/CentOS/RedHat
+            ["libX11-xcb"] = new List<string> { "libX11-xcb.so.1", "libX11-xcb.so" }
+        };
+
+        internal static void EnsureResolverRegistered()
+        {
+            if (!_isResolverRegistered)
+            {
+                NativeLibrary.SetDllImportResolver(typeof(PlatformHelper).Assembly, (name, assembly, path) =>
+                {
+                    if (LibrariesMapping.TryGetValue(name, out List<string> values))
+                    {
+                        foreach (string value in values)
+                        {
+                            if (NativeLibrary.TryLoad(value, assembly, path, out IntPtr handle))
+                            {
+                                return handle;
+                            }
+                        }
+                    }
+
+                    return IntPtr.Zero;
+                });
+
+                _isResolverRegistered = true;
+            }
+
+        }
+
+        internal static bool IsLibraryAvailable(string name)
+        {
+            if (LibrariesMapping.TryGetValue(name, out List<string> values))
+            {
+                foreach (string value in values)
+                {
+                    if (NativeLibrary.TryLoad(value, out IntPtr handle))
+                    {
+                        NativeLibrary.Free(handle);
+
+                        return true;
+                    }
+                }
+            }
+            else if (NativeLibrary.TryLoad(name, out IntPtr handle))
+            {
+                NativeLibrary.Free(handle);
+
+                return true;
+            }
+
+            return false;
+        }
+
         public static SwappableNativeWindowBase CreateOpenGLWindow(FramebufferFormat format, int x, int y, int width, int height)
         {
             if (OperatingSystem.IsLinux())
