@@ -120,7 +120,7 @@ namespace SPB.Platform.X11
         [StructLayout(LayoutKind.Sequential)]
         public struct XErrorEvent
         {
-            public XEventName type;
+            public XReplyCode type;
             public Display display;
             public IntPtr resourceid;
             public IntPtr serial;
@@ -130,6 +130,14 @@ namespace SPB.Platform.X11
         }
 
         public delegate int XErrorHandler(Display displayHandle, ref XErrorEvent errorEvent);
+
+        public enum XReplyCode : byte
+        {
+            // Normal reply
+            X_Reply = 1,
+            // Error
+            X_Error = 0
+        }
 
         public enum XRequest : byte
         {
@@ -258,6 +266,9 @@ namespace SPB.Platform.X11
         [DllImport(LibraryName, EntryPoint = "XSetErrorHandler")]
         public extern static IntPtr SetErrorHandler(XErrorHandler error_handler);
 
+        [DllImport(LibraryName, EntryPoint = "XGetErrorText", CharSet = CharSet.Unicode)]
+        public extern static int GetErrorText(Display display, int code, IntPtr buffer, int length);
+
         public enum Gravity
         {
             ForgetGravity = 0,
@@ -337,7 +348,22 @@ namespace SPB.Platform.X11
 
         static int ErrorHandler(Display displayHandle, ref XErrorEvent errorEvent)
         {
-            Console.WriteLine($"XError: {errorEvent.type} result is {errorEvent.error_code}");
+            IntPtr buffer = Marshal.AllocHGlobal(256);
+            string error;
+            int result = GetErrorText(displayHandle, errorEvent.error_code, buffer, 256);
+
+            if (result == 0)
+            {
+                error = Marshal.PtrToStringAuto(buffer);
+            }
+            else
+            {
+                error = $"GetErrorText returned: {result}";
+            }
+
+            Marshal.FreeHGlobal(buffer);
+
+            Console.WriteLine($"XError: {errorEvent.type} result is {error} (code: {errorEvent.error_code})");
             Console.Out.Flush();
             return 0;
         }
