@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <VersionPrefix>0.0.4</VersionPrefix>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Authors>Thog</Authors>
+    <Authors>marysaka</Authors>
     <Description>Simple Platform Bindings</Description>
     <Copyright>Copyright (c) SPB Team and Contributors</Copyright>
-    <PackageProjectUrl>https://github.com/Thog/SPB/</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/Thog/SPB/</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/marysaka/SPB/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/marysaka/SPB/</RepositoryUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
   <ItemGroup>
