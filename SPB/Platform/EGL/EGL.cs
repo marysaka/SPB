@@ -10,33 +10,18 @@ namespace SPB.Platform.EGL
 {
     public static class EGL
     {
-        private const string LibraryName = "glx.dll";
+        private const string LibraryName = "egl";
 
-        private static readonly IntPtr _eglLibraryHandle;
-
-        public static bool IsPresent => _eglLibraryHandle != IntPtr.Zero;
+        public static bool IsPresent => PlatformHelper.IsLibraryAvailable(LibraryName);
 
         static EGL()
         {
-            if (!NativeLibrary.TryLoad("libEGL.so.1", out _eglLibraryHandle))
-            {
-                NativeLibrary.TryLoad("libEGL.so", out _eglLibraryHandle);
-            }
-
-            NativeLibrary.SetDllImportResolver(typeof(EGL).Assembly, (name, assembly, path) =>
-            {
-                if (name != LibraryName)
-                {
-                    return IntPtr.Zero;
-                }
-
-                return _eglLibraryHandle;
-            });
+            PlatformHelper.EnsureResolverRegistered();
         }
 
         [DllImport(LibraryName, EntryPoint = "eglGetDisplay")]
         // NOTE: By spec nativeDisplay is supposed to be an opaque type, however it is always a pointer on all platform except EMS.
-        public static unsafe extern Display GetDisplay(UIntPtr nativeDisplay);
+        public static unsafe extern Display GetDisplay(IntPtr nativeDisplay);
 
         [DllImport(LibraryName, EntryPoint = "eglInitialize")]
         public static unsafe extern bool Initialize(Display display, out int major, out int minor);
@@ -46,6 +31,14 @@ namespace SPB.Platform.EGL
 
         [DllImport(LibraryName, EntryPoint = "eglChooseConfig")]
         public static unsafe extern bool ChooseConfig(Display display, int[] attributes, IntPtr configs, int configSize, out int numConfig);
+
+
+        [DllImport(LibraryName, EntryPoint = "eglGetConfigAttrib")]
+        public static unsafe extern bool GetConfigAttrib(Display display, IntPtr config, int attribute, out int value);
+
+
+        [DllImport(LibraryName, EntryPoint = "eglCreateWindowSurface")]
+        public static unsafe extern IntPtr CreateWindowSurface(Display display, IntPtr config, IntPtr nativeWindow, int[] attributes);
 
         [DllImport(LibraryName, EntryPoint = "eglDestroySurface")]
         public static extern bool DestroySurface(Display display, Surface surface);
@@ -111,6 +104,7 @@ namespace SPB.Platform.EGL
         {
             WINDOW_BIT = 0x4,
             OPENGL_BIT = 0x8,
+            GL_COLORSPACE_LINEAR = 0x308A,
 
             BUFFER_SIZE = 0x3020,
             ALPHA_SIZE = 0x3021,
@@ -120,24 +114,27 @@ namespace SPB.Platform.EGL
             DEPTH_SIZE = 0x3025,
             STENCIL_SIZE = 0x3026,
             CONFIG_CAVEAT = 0x3027,
-
+            NATIVE_VISUAL_ID = 0x302E,
             SAMPLES = 0x3031,
             SAMPLE_BUFFERS  = 0x3032,
             SURFACE_TYPE = 0x3033,
+            NONE = 0x3038,
             COLOR_BUFFER_TYPE = 0x303F,
             RENDERABLE_TYPE = 0x3040,
             CONFORMANT = 0x3042,
             RGB_BUFFER = 0x308E,
             SINGLE_BUFFER = 0x3085,
             RENDER_BUFFER = 0x3086,
+            GL_COLORSPACE = 0x309D
         }
 
         public enum CreateContextAttribute : int
         {
+            NONE = 0x3038,
             MAJOR_VERSION = 0x3098,
             MINOR_VERSION = 0x30FB,
             FLAGS = 0x30FC,
-            PROFILE_MASK = 0x30FD
+            PROFILE_MASK = 0x30FD,
         }
 
         public enum CreateContextFlags : int

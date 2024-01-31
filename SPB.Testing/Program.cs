@@ -11,13 +11,15 @@ namespace SPB
 {
     class Program
     {
+        private const bool _useWindow = true;
+
         static void Main(string[] args)
         {
-            SwappableNativeWindowBase window = PlatformHelper.CreateOpenGLWindow(FramebufferFormat.Default, 0, 0, 250, 250);
+            SwappableNativeWindowBase window = _useWindow ? PlatformHelper.CreateOpenGLWindow(FramebufferFormat.Default, 0, 0, 250, 250) : null;
 
-            window.Show();
+            window?.Show();
 
-            OpenGLContextBase context = PlatformHelper.CreateOpenGLContext(FramebufferFormat.Default, 3, 3, OpenGLContextFlags.Compat);
+            OpenGLContextBase context = PlatformHelper.CreateOpenGLContext(FramebufferFormat.Default, 3, 3, OpenGLContextFlags.Compat| OpenGLContextFlags.OffScreen);
 
             context.Initialize(window);
             context.MakeCurrent(window);
@@ -27,18 +29,16 @@ namespace SPB
             GL.ClearColor(1.0f, 0.5f, 1.0f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            window.SwapBuffers();
+            window?.SwapBuffers();
 
             Console.WriteLine($"OpenGL vendor: {GL.GetString(StringName.Vendor)}");
             Console.WriteLine($"OpenGL version: {GL.GetString(StringName.Version)}");
             Console.WriteLine($"OpenGL renderer: {GL.GetString(StringName.Renderer)}");
             Console.WriteLine($"OpenGL context profile mask: {GL.GetInteger((GetPName)All.ContextProfileMask)}");
             Console.WriteLine($"OpenGL context flags: {GL.GetInteger((GetPName)All.ContextFlags)}");
-            Console.WriteLine($"Window swap interval: {window.SwapInterval}");
+            Console.WriteLine($"Window swap interval: {window?.SwapInterval}");
 
             Thread.Sleep(2000);
-
-            window.Dispose();
 
             Console.WriteLine($"Dispose OpenGL context!");
             context.Dispose();
@@ -46,7 +46,7 @@ namespace SPB
             string vendor2 = GL.GetString(StringName.Vendor);
             Console.WriteLine($"OpenGL vendor: {vendor2}");
 
-            window.Dispose();
+            window?.Dispose();
         }
     }
 }

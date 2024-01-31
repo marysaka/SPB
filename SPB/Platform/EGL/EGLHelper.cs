@@ -34,7 +34,7 @@ namespace SPB.Platform.EGL
 
             // Do not allow possible software rendering.
             result.Add((int)EGL.ConfigAttribute.CONFIG_CAVEAT);
-            result.Add(0);
+            result.Add((int)EGL.ConfigAttribute.NONE);
 
             // Only allow surface window.
             result.Add((int)EGL.ConfigAttribute.SURFACE_TYPE);
@@ -87,7 +87,7 @@ namespace SPB.Platform.EGL
                 result.Add((int)format.Samples);
             }
 
-            result.Add(0);
+            result.Add((int)EGL.ConfigAttribute.NONE);
 
             return result;
         }
@@ -123,7 +123,7 @@ namespace SPB.Platform.EGL
                 }
             }
 
-            result.Add(0);
+            result.Add((int)EGL.CreateContextAttribute.NONE);
 
             return result;
         }

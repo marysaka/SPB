@@ -9,6 +9,7 @@ using SPB.Windowing;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using SPB.Platform.EGL;
 
 namespace SPB.Platform
 {
@@ -19,6 +20,7 @@ namespace SPB.Platform
         private static readonly Dictionary<string, List<string>> LibrariesMapping = new Dictionary<string, List<string>>()
         {
             ["glx"] = new List<string> { "libGL.so.1", "libGL.so" },
+            ["egl"] = new List<string> { "libEGL.so.1", "libEGL.so" },
 
             // Required for Fedora/CentOS/RedHat
             ["libX11"] = new List<string> { "libX11.so.6", "libX11.so" },
@@ -81,7 +83,7 @@ namespace SPB.Platform
             if (OperatingSystem.IsLinux())
             {
                 // TODO: detect X11/Wayland/DRI
-                return X11Helper.CreateGLXWindow(new NativeHandle(X11.X11.DefaultDisplay), format, x, y, width, height);
+                return X11Helper.CreateEGLWindow(new NativeHandle(X11.X11.DefaultDisplay), format, x, y, width, height);
             }
             else if (OperatingSystem.IsWindows())
             {
@@ -96,6 +98,16 @@ namespace SPB.Platform
         {
             if (OperatingSystem.IsLinux())
             {
+                if (EGL.EGL.IsPresent)
+                {
+                    if (shareContext != null && shareContext is not EGLOpenGLContext)
+                    {
+                        throw new ContextException($"shared context must be of type {typeof(EGLOpenGLContext).Name}.");
+                    }
+
+                    return new EGLOpenGLContext(framebufferFormat, major, minor, flags, directRendering, (EGLOpenGLContext)shareContext);
+                }
+
                 // TODO: detect X11/Wayland/DRI
                 if (shareContext != null && !(shareContext is GLXOpenGLContext))
                 {

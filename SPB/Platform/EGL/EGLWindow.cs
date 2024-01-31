@@ -7,17 +7,19 @@ namespace SPB.Platform.EGL
         public override NativeHandle DisplayHandle { get; }
         public override NativeHandle WindowHandle => _nativeWindow.WindowHandle;
         public NativeHandle SurfaceHandle { get; }
+        public NativeHandle Config { get; }
 
         private uint _swapInterval;
-        private EGLNativeWindowHandle _nativeWindow;
+        private NativeWindowBase _nativeWindow;
 
         public bool IsDisposed { get; private set; }
 
-        public EGLWindow(NativeHandle displayHandle, EGLNativeWindowHandle nativeWindow, NativeHandle surfaceHandle)
+        public EGLWindow(NativeHandle displayHandle, NativeWindowBase nativeWindow, NativeHandle surfaceHandle, NativeHandle config)
         {
             DisplayHandle = displayHandle;
             _nativeWindow = nativeWindow;
             SurfaceHandle = surfaceHandle;
+            Config = config;
 
             _swapInterval = 1;
         }

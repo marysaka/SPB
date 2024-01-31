@@ -46,24 +46,23 @@ namespace SPB.Platform.EGL
 
         public override void Initialize(NativeWindowBase window = null)
         {
-            IntPtr display;
+            NativeHandle display;
+            NativeHandle config;
 
             if (window != null)
             {
-                display = window.DisplayHandle.RawHandle;
+                if (window is not EGLWindow eglWindow)
+                {
+                    throw new ContextException("CreateContext() failed. Wrong window type!");
+                }
+
+                display = window.DisplayHandle;
+                config = eglWindow.Config;
             }
             else
             {
-                // TODO: check for "EGL_KHR_surfaceless_context" support
-
-                display = EGL.GetDisplay(UIntPtr.Zero);
-            }
-
-            IntPtr config = EGLHelper.SelectConfig(display, FramebufferFormat);
-
-            if (config == IntPtr.Zero)
-            {
-                throw new ContextException("CreateContext() failed. EGL configuration couldn't be selected!");
+                // TODO: check for "EGL_KHR_surfaceless_context" support and implement this
+                throw new NotImplementedException();
             }
 
             List<int> contextAttribute = EGLHelper.GetContextCreationAttribute(this);
@@ -73,12 +72,12 @@ namespace SPB.Platform.EGL
             // By spec, eglBindAPI must be called before any context related API calls on a per thread basis.
             if (EGL.BindAPI(EGL.ApiType.OPENGL_API))
             {
-                ContextHandle = EGL.CreateContext(display, config, shareContextHandle, contextAttribute.ToArray());
+                ContextHandle = EGL.CreateContext(display.RawHandle, config.RawHandle, shareContextHandle, contextAttribute.ToArray());
             }
 
             if (ContextHandle != IntPtr.Zero)
             {
-                _display = display;
+                _display = display.RawHandle;
             }
 
             if (ContextHandle == IntPtr.Zero)
@@ -89,7 +88,12 @@ namespace SPB.Platform.EGL
 
         public override void MakeCurrent(NativeWindowBase window)
         {
-            if (_window != null && _window.WindowHandle.RawHandle == window.WindowHandle.RawHandle && IsCurrent)
+            if (window != null && _window != null && _window.WindowHandle.RawHandle == window.WindowHandle.RawHandle && IsCurrent)
+            {
+                return;
+            }
+
+            if (!IsCurrent && Flags.HasFlag(OpenGLContextFlags.OffScreen) && window == null)
             {
                 return;
             }
