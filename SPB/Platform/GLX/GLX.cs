@@ -204,10 +204,6 @@ namespace SPB.Platform.GLX
 
             [DllImport(LibraryName, EntryPoint = "glXGetProcAddressARB")]
             public static extern IntPtr GetProcAddress(string procName);
-
-
-            [DllImport(LibraryName, EntryPoint = "glXCreateContextAttribsARB")]
-            public static extern Context CreateContextAttribs(Display display, IntPtr fbConfigs, Context shareContext, bool direct, int[] attributes);
         }
 
         internal sealed class Ext

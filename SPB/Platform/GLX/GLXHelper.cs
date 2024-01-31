@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using SPB.Graphics;
 using SPB.Graphics.OpenGL;
@@ -11,6 +12,30 @@ namespace SPB.Platform.GLX
     [SupportedOSPlatform("linux")]
     public sealed class GLXHelper
     {
+        private static bool _isInit = false;
+
+        [UnmanagedFunctionPointer(CallingConvention.Winapi)]
+        private delegate IntPtr glxCreateContextAttribsARBDelegate(IntPtr display, IntPtr fbConfigs, IntPtr shareContext, bool direct, int[] attributes);
+
+        private static glxCreateContextAttribsARBDelegate CreateContextAttribsArb;
+
+        private static void EnsureInit()
+        {
+            if (!_isInit)
+            {
+                CreateContextAttribsArb = Marshal.GetDelegateForFunctionPointer<glxCreateContextAttribsARBDelegate>(GLX.ARB.GetProcAddress("glXCreateContextAttribsARB"));
+
+                _isInit = true;
+            }
+        }
+
+        public static IntPtr CreateContextAttribs(IntPtr display, IntPtr fbConfigs, IntPtr shareContext, bool direct, int[] attributes)
+        {
+            EnsureInit();
+
+            return CreateContextAttribsArb(display, fbConfigs, shareContext, direct, attributes);
+        }
+
         public static List<int> FramebufferFormatToVisualAttribute(FramebufferFormat format)
         {
             List<int> result = new List<int>();

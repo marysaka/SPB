@@ -34,6 +34,7 @@ namespace SPB
             Console.WriteLine($"OpenGL renderer: {GL.GetString(StringName.Renderer)}");
             Console.WriteLine($"OpenGL context profile mask: {GL.GetInteger((GetPName)All.ContextProfileMask)}");
             Console.WriteLine($"OpenGL context flags: {GL.GetInteger((GetPName)All.ContextFlags)}");
+            Console.WriteLine($"Window swap interval: {window.SwapInterval}");
 
             Thread.Sleep(2000);
 

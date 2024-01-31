@@ -72,11 +72,11 @@ namespace SPB.Platform.GLX
 
             IntPtr shareContextHandle = ShareContext == null ? IntPtr.Zero : ShareContext.ContextHandle;
 
-            IntPtr context = GLX.ARB.CreateContextAttribs(display, fbConfig, shareContextHandle, DirectRendering, contextAttribute.ToArray());
+            IntPtr context = GLXHelper.CreateContextAttribs(display, fbConfig, shareContextHandle, DirectRendering, contextAttribute.ToArray());
 
             if (context == IntPtr.Zero)
             {
-                context = GLX.ARB.CreateContextAttribs(display, fbConfig, shareContextHandle, !DirectRendering, contextAttribute.ToArray());
+                context = GLXHelper.CreateContextAttribs(display, fbConfig, shareContextHandle, !DirectRendering, contextAttribute.ToArray());
 
                 DirectRendering = !DirectRendering;
             }
